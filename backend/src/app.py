@@ -2,6 +2,7 @@
 from flask import Flask
 from users import users_bp  # Import the users Blueprint
 from groups import groups_bp
+from login import login_bp
 from createevent import events_bp
 from database import test_connection  # Import to verify connection
 
@@ -12,6 +13,7 @@ app = Flask(__name__)
 app.register_blueprint(users_bp)
 app.register_blueprint(groups_bp)
 app.register_blueprint(events_bp)
+app.register_blueprint(login_bp)
 
 # Root route (optional)
 @app.route('/')

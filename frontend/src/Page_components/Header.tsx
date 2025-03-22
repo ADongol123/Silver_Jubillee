@@ -13,12 +13,12 @@ const Header = () => {
           >
             Home
           </Link>
-          {/* <Link
+          <Link
             to="/events"
             className="text-lg font-medium text-muted-foreground hover:text-primary"
           >
             Events
-          </Link> */}
+          </Link>
           <Link
             to="/groups"
             className="text-lg font-medium text-muted-foreground hover:text-primary"

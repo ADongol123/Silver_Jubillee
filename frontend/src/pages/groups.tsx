@@ -1,13 +1,5 @@
 // import Link from "next/link"
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -16,12 +8,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-<<<<<<< HEAD
-=======
 import GroupCard from "@/Page_components/GroupCards";
->>>>>>> 26abf248c9313c35a49a2cb54c0c64f2be70faa9
 import Header from "@/Page_components/Header";
-import { Filter, Search, Users } from "lucide-react";
+import { Filter, Search } from "lucide-react";
 import { Link } from "react-router-dom";
 
 export default function GroupsPage() {

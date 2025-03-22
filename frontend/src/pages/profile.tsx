@@ -11,6 +11,7 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Switch } from "@/components/ui/switch";
 import { Calendar, Clock, MapPin, Settings, User } from "lucide-react";
+import Header from "@/Page_components/Header";
 
 export default function ProfilePage() {
   const [fontSize, setFontSize] = useState("medium");
@@ -38,23 +39,7 @@ export default function ProfilePage() {
       }}
     >
       <header className="border-b">
-        <div className="flex h-16 items-center px-4 sm:px-6 lg:px-8 ">
-          <h1 className="text-2xl font-bold text-primary">Gather</h1>
-          {/* <nav className="ml-auto flex gap-4 sm:gap-6">
-            <link href="/" className="text-lg font-medium text-muted-foreground hover:text-primary">
-              Home
-            </link>
-            <link href="/events" className="text-lg font-medium text-muted-foreground hover:text-primary">
-              Events
-            </link>
-            <link href="/groups" className="text-lg font-medium text-muted-foreground hover:text-primary">
-              Groups
-            </link>
-            <link href="/profile" className="text-lg font-medium text-primary">
-              My Profile
-            </link>
-          </nav> */}
-        </div>
+       <Header/>
       </header>
       <main className="px-4 py-8 sm:px-6 lg:px-8">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">

@@ -10,18 +10,21 @@ import {
 } from "@/components/ui/card";
 import Header from "@/Page_components/Header";
 import { Calendar, Clock, MapPin, Users } from "lucide-react";
-import Banner from "../../public/banner.jpg"
-import Community from "../../public/workshop.jpg"
-import Meeting from "../../public/bookshop.jpg"
-import Photography from "../../public/photography.jpg"
-import walking from "../../public/walking.jpg"
+import Banner from "../../public/banner.jpg";
+import Community from "../../public/workshop.jpg";
+import Meeting from "../../public/bookshop.jpg";
+import Photography from "../../public/photography.jpg";
+import walking from "../../public/walking.jpg";
+import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+
 export default function Home() {
   return (
     <div className="min-h-screen bg-background">
       <header className="border-b">
-        <Header/>
+        <Header />
       </header>
-      <main className="container px-4 py-8 sm:px-6 lg:px-8">
+      <main className="px-4 py-8 sm:px-6 lg:px-8">
         <section className="mb-12">
           <div className="grid gap-6 lg:grid-cols-2 lg:gap-12 items-center">
             <div className="space-y-4">
@@ -34,10 +37,10 @@ export default function Home() {
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
                 <Button size="lg" className="text-lg px-8">
-                  Find Events
+                  <Link to="/events">Find Events</Link>
                 </Button>
                 <Button size="lg" variant="outline" className="text-lg px-8">
-                  Join Groups
+                  <Link to="/groups">Join Groups</Link>
                 </Button>
               </div>
             </div>
@@ -234,17 +237,22 @@ const groups = [
     members: 68,
     image: walking,
   },
-
 ];
 
-function EventCard({ event }:any) {
+function EventCard({ event }: any) {
+  const navigate = useNavigate();
+
+  const handleViewDetails = (ev: any) => {
+    navigate("/eventDetail", { state: { ev } });
+  };
+
   return (
     <Card className="h-full">
-      <CardHeader className="p-0">
+      <CardHeader className="p-0 m-0">
         <img
           src={event.image || "/placeholder.svg"}
           alt={event.title}
-          className="w-full h-48 object-cover rounded-t-lg"
+          className="w-full h-58 object-cover rounded-t-lg"
         />
       </CardHeader>
       <CardContent className="p-6">
@@ -268,20 +276,25 @@ function EventCard({ event }:any) {
         </div>
       </CardContent>
       <CardFooter className="px-6 pb-6 pt-0">
-        <Button className="w-full text-base">Register</Button>
+        <Button
+          className="w-full text-base"
+          onClick={() => handleViewDetails(event)}
+        >
+          <Link to="/eventDetail">Register</Link>
+        </Button>
       </CardFooter>
     </Card>
   );
 }
 
-function GroupCard({ group }:any) {
+function GroupCard({ group }: any) {
   return (
     <Card className="h-full">
       <CardHeader className="p-0">
         <img
           src={group.image || "/placeholder.svg"}
           alt={group.name}
-          className="w-full h-48 object-cover rounded-t-lg"
+          className="w-full h-58 object-cover rounded-t-lg"
         />
       </CardHeader>
       <CardContent className="p-6">
@@ -296,7 +309,12 @@ function GroupCard({ group }:any) {
       </CardContent>
       <CardFooter className="px-6 pb-6 pt-0">
         <Button variant="outline" className="w-full text-base">
-          Join Group
+          <Link
+            to="/groups"
+            className="text-lg font-medium text-muted-foreground hover:text-primary"
+          >
+            Join Group
+          </Link>
         </Button>
       </CardFooter>
     </Card>

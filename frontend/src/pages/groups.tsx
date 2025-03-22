@@ -1,23 +1,40 @@
 // import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import Header from "@/Page_components/Header"
-import { Filter, Search, Users } from "lucide-react"
-import { Link } from "react-router-dom"
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import Header from "@/Page_components/Header";
+import { Filter, Search, Users } from "lucide-react";
+import { Link } from "react-router-dom";
 
 export default function GroupsPage() {
   return (
     <div className="min-h-screen bg-background">
       <header className="border-b">
-        <Header/>
+        <Header />
       </header>
       <main className="container px-4 py-8 sm:px-6 lg:px-8">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">Interest Groups</h1>
-            <p className="text-xl text-muted-foreground mt-1">Connect with people who share your interests</p>
+            <h1 className="text-3xl font-bold tracking-tight">
+              Interest Groups
+            </h1>
+            <p className="text-xl text-muted-foreground mt-1">
+              Connect with people who share your interests
+            </p>
           </div>
           <Button size="lg" className="text-lg">
             Create Group
@@ -31,10 +48,17 @@ export default function GroupsPage() {
               <div className="space-y-4">
                 <div className="relative">
                   <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                  <Input type="search" placeholder="Search groups..." className="pl-8 text-base" />
+                  <Input
+                    type="search"
+                    placeholder="Search groups..."
+                    className="pl-8 text-base"
+                  />
                 </div>
                 <div className="space-y-2">
-                  <label htmlFor="group-category" className="text-sm font-medium">
+                  <label
+                    htmlFor="group-category"
+                    className="text-sm font-medium"
+                  >
                     Category
                   </label>
                   <Select defaultValue="all">
@@ -48,12 +72,17 @@ export default function GroupsPage() {
                       <SelectItem value="games">Games & Recreation</SelectItem>
                       <SelectItem value="health">Health & Wellness</SelectItem>
                       <SelectItem value="tech">Technology</SelectItem>
-                      <SelectItem value="outdoors">Outdoors & Nature</SelectItem>
+                      <SelectItem value="outdoors">
+                        Outdoors & Nature
+                      </SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
                 <div className="space-y-2">
-                  <label htmlFor="activity-level" className="text-sm font-medium">
+                  <label
+                    htmlFor="activity-level"
+                    className="text-sm font-medium"
+                  >
                     Activity Level
                   </label>
                   <Select defaultValue="all">
@@ -95,9 +124,15 @@ export default function GroupsPage() {
               <h3 className="text-lg font-medium mb-4">Your Groups</h3>
               <div className="space-y-3">
                 {myGroups.map((group) => (
-                  <Link key={group.id} to={`/groups/${group.id}`} className="block rounded-md p-2 hover:bg-muted">
+                  <Link
+                    key={group.id}
+                    to={`/groups/${group.id}`}
+                    className="block rounded-md p-2 hover:bg-muted"
+                  >
                     <div className="font-medium">{group.name}</div>
-                    <div className="text-sm text-muted-foreground">Next meeting: {group.nextMeeting}</div>
+                    <div className="text-sm text-muted-foreground">
+                      Next meeting: {group.nextMeeting}
+                    </div>
                   </Link>
                 ))}
                 <Button variant="ghost" className="w-full text-primary">
@@ -150,28 +185,42 @@ export default function GroupsPage() {
           <div className="grid gap-8 lg:grid-cols-3">
             <div>
               <h2 className="text-xl font-bold">Gather</h2>
-              <p className="mt-2 text-muted-foreground">Connecting seniors with shared interests and local events.</p>
+              <p className="mt-2 text-muted-foreground">
+                Connecting seniors with shared interests and local events.
+              </p>
             </div>
             <div>
               <h3 className="text-lg font-medium mb-2">Quick Links</h3>
               <ul className="space-y-2">
                 <li>
-                  <Link to="/about" className="text-muted-foreground hover:text-primary">
+                  <Link
+                    to="/about"
+                    className="text-muted-foreground hover:text-primary"
+                  >
                     About Us
                   </Link>
                 </li>
                 <li>
-                  <Link to="/help" className="text-muted-foreground hover:text-primary">
+                  <Link
+                    to="/help"
+                    className="text-muted-foreground hover:text-primary"
+                  >
                     Help & Support
                   </Link>
                 </li>
                 <li>
-                  <Link to="/contact" className="text-muted-foreground hover:text-primary">
+                  <Link
+                    to="/contact"
+                    className="text-muted-foreground hover:text-primary"
+                  >
                     Contact
                   </Link>
                 </li>
                 <li>
-                  <Link to="/accessibility" className="text-muted-foreground hover:text-primary">
+                  <Link
+                    to="/accessibility"
+                    className="text-muted-foreground hover:text-primary"
+                  >
                     Accessibility
                   </Link>
                 </li>
@@ -179,18 +228,24 @@ export default function GroupsPage() {
             </div>
             <div>
               <h3 className="text-lg font-medium mb-2">Contact Us</h3>
-              <p className="text-muted-foreground">Need assistance? Our support team is here to help.</p>
-              <p className="mt-2 text-muted-foreground">Phone: (555) 123-4567</p>
+              <p className="text-muted-foreground">
+                Need assistance? Our support team is here to help.
+              </p>
+              <p className="mt-2 text-muted-foreground">
+                Phone: (555) 123-4567
+              </p>
               <p className="text-muted-foreground">Email: support@gather.com</p>
             </div>
           </div>
           <div className="mt-8 border-t pt-8 text-center">
-            <p className="text-muted-foreground">© 2025 Gather. All rights reserved.</p>
+            <p className="text-muted-foreground">
+              © 2025 Gather. All rights reserved.
+            </p>
           </div>
         </div>
       </footer>
     </div>
-  )
+  );
 }
 
 // Sample data
@@ -243,7 +298,7 @@ const groups = [
     category: "Outdoors & Nature",
     image: "/placeholder.svg?height=200&width=300",
   },
-]
+];
 
 const myGroups = [
   {
@@ -256,9 +311,9 @@ const myGroups = [
     name: "Walking Club",
     nextMeeting: "April 16, 2025",
   },
-]
+];
 
-function GroupCard({ group }:any) {
+function GroupCard({ group }: any) {
   return (
     <Card className="h-full">
       <CardHeader className="p-0">
@@ -270,13 +325,17 @@ function GroupCard({ group }:any) {
       </CardHeader>
       <CardContent className="p-6">
         <CardTitle className="text-xl mb-2">{group.name}</CardTitle>
-        <CardDescription className="text-base mb-4">{group.description}</CardDescription>
+        <CardDescription className="text-base mb-4">
+          {group.description}
+        </CardDescription>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Users className="h-4 w-4 text-muted-foreground" />
             <span className="text-sm">{group.members} members</span>
           </div>
-          <span className="text-sm text-muted-foreground">{group.category}</span>
+          <span className="text-sm text-muted-foreground">
+            {group.category}
+          </span>
         </div>
       </CardContent>
       <CardFooter className="px-6 pb-6 pt-0">
@@ -285,6 +344,5 @@ function GroupCard({ group }:any) {
         </Button>
       </CardFooter>
     </Card>
-  )
+  );
 }
-

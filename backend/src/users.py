@@ -130,3 +130,28 @@ def delete_user(user_id):
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+    
+# NEW: Get all users
+@users_bp.route('/users', methods=['GET'])
+def get_all_users():
+    try:
+        # Fetch all users from the collection
+        users = users_collection.find()
+
+        # Convert to a list and process each document
+        users_list = []
+        for user in users:
+            user['_id'] = str(user['_id'])  # Convert ObjectId to string
+            user['createdAt'] = user['createdAt'].isoformat()  # Convert datetime to ISO string
+            if user['lastLogin']:
+                user['lastLogin'] = user['lastLogin'].isoformat()
+            users_list.append(user)
+
+        return jsonify({
+            "message": "Users retrieved successfully",
+            "users": users_list,
+            "count": len(users_list)
+        }), 200
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500

@@ -1,63 +1,85 @@
-"use client"
-
-import { useState } from "react"
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Label } from "@/components/ui/label"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Switch } from "@/components/ui/switch"
-import { Calendar, Clock, MapPin, Settings, User } from "lucide-react"
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Switch } from "@/components/ui/switch";
+import { Calendar, Clock, MapPin, Settings, User } from "lucide-react";
 
 export default function ProfilePage() {
-  const [fontSize, setFontSize] = useState("medium")
+  const [fontSize, setFontSize] = useState("medium");
 
   const increaseFontSize = () => {
-    if (fontSize === "medium") setFontSize("large")
-    if (fontSize === "large") setFontSize("x-large")
-  }
+    if (fontSize === "medium") setFontSize("large");
+    if (fontSize === "large") setFontSize("x-large");
+  };
 
   const decreaseFontSize = () => {
-    if (fontSize === "x-large") setFontSize("large")
-    if (fontSize === "large") setFontSize("medium")
-  }
+    if (fontSize === "x-large") setFontSize("large");
+    if (fontSize === "large") setFontSize("medium");
+  };
 
   return (
     <div
       className="min-h-screen bg-background"
-      style={{ fontSize: fontSize === "medium" ? "1rem" : fontSize === "large" ? "1.125rem" : "1.25rem" }}
+      style={{
+        fontSize:
+          fontSize === "medium"
+            ? "1rem"
+            : fontSize === "large"
+            ? "1.125rem"
+            : "1.25rem",
+      }}
     >
       <header className="border-b">
-        <div className="container flex h-16 items-center px-4 sm:px-6 lg:px-8">
+        <div className="flex h-16 items-center px-4 sm:px-6 lg:px-8 ">
           <h1 className="text-2xl font-bold text-primary">Gather</h1>
-          <nav className="ml-auto flex gap-4 sm:gap-6">
-            <Link href="/" className="text-lg font-medium text-muted-foreground hover:text-primary">
+          {/* <nav className="ml-auto flex gap-4 sm:gap-6">
+            <link href="/" className="text-lg font-medium text-muted-foreground hover:text-primary">
               Home
-            </Link>
-            <Link href="/events" className="text-lg font-medium text-muted-foreground hover:text-primary">
+            </link>
+            <link href="/events" className="text-lg font-medium text-muted-foreground hover:text-primary">
               Events
-            </Link>
-            <Link href="/groups" className="text-lg font-medium text-muted-foreground hover:text-primary">
+            </link>
+            <link href="/groups" className="text-lg font-medium text-muted-foreground hover:text-primary">
               Groups
-            </Link>
-            <Link href="/profile" className="text-lg font-medium text-primary">
+            </link>
+            <link href="/profile" className="text-lg font-medium text-primary">
               My Profile
-            </Link>
-          </nav>
+            </link>
+          </nav> */}
         </div>
       </header>
-      <main className="container px-4 py-8 sm:px-6 lg:px-8">
+      <main className="px-4 py-8 sm:px-6 lg:px-8">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
           <div>
             <h1 className="text-3xl font-bold tracking-tight">My Profile</h1>
-            <p className="text-xl text-muted-foreground mt-1">Manage your profile and preferences</p>
+            <p className="text-xl text-muted-foreground mt-1">
+              Manage your profile and preferences
+            </p>
           </div>
           <div className="flex items-center gap-2">
-            <Button variant="outline" size="icon" onClick={decreaseFontSize} disabled={fontSize === "medium"}>
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={decreaseFontSize}
+              disabled={fontSize === "medium"}
+            >
               <span className="text-lg">A-</span>
               <span className="sr-only">Decrease font size</span>
             </Button>
-            <Button variant="outline" size="icon" onClick={increaseFontSize} disabled={fontSize === "x-large"}>
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={increaseFontSize}
+              disabled={fontSize === "x-large"}
+            >
               <span className="text-lg">A+</span>
               <span className="sr-only">Increase font size</span>
             </Button>
@@ -76,19 +98,31 @@ export default function ProfilePage() {
             <CardContent>
               <div className="space-y-4">
                 <div className="space-y-1">
-                  <div className="text-sm font-medium text-muted-foreground">Email</div>
+                  <div className="text-sm font-medium text-muted-foreground">
+                    Email
+                  </div>
                   <div>margaret.j@example.com</div>
                 </div>
                 <div className="space-y-1">
-                  <div className="text-sm font-medium text-muted-foreground">Location</div>
+                  <div className="text-sm font-medium text-muted-foreground">
+                    Location
+                  </div>
                   <div>Portland, OR</div>
                 </div>
                 <div className="space-y-1">
-                  <div className="text-sm font-medium text-muted-foreground">Interests</div>
+                  <div className="text-sm font-medium text-muted-foreground">
+                    Interests
+                  </div>
                   <div className="flex flex-wrap gap-2">
-                    <span className="rounded-full bg-primary/10 px-3 py-1 text-sm text-primary">Gardening</span>
-                    <span className="rounded-full bg-primary/10 px-3 py-1 text-sm text-primary">Reading</span>
-                    <span className="rounded-full bg-primary/10 px-3 py-1 text-sm text-primary">Walking</span>
+                    <span className="rounded-full bg-primary/10 px-3 py-1 text-sm text-primary">
+                      Gardening
+                    </span>
+                    <span className="rounded-full bg-primary/10 px-3 py-1 text-sm text-primary">
+                      Reading
+                    </span>
+                    <span className="rounded-full bg-primary/10 px-3 py-1 text-sm text-primary">
+                      Walking
+                    </span>
                   </div>
                 </div>
                 <Button variant="outline" className="w-full">
@@ -132,7 +166,11 @@ export default function ProfilePage() {
                           <Button variant="outline" size="sm">
                             View Details
                           </Button>
-                          <Button variant="ghost" size="sm" className="text-destructive">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="text-destructive"
+                          >
                             Cancel RSVP
                           </Button>
                         </div>
@@ -182,11 +220,19 @@ export default function ProfilePage() {
                       <div className="grid gap-4 md:grid-cols-[1fr_auto]">
                         <div>
                           <h4 className="text-lg font-medium">{group.name}</h4>
-                          <p className="text-muted-foreground mt-1">{group.description}</p>
+                          <p className="text-muted-foreground mt-1">
+                            {group.description}
+                          </p>
                           <div className="flex items-center gap-2 mt-2">
-                            <span className="text-sm text-muted-foreground">{group.members} members</span>
-                            <span className="text-sm text-muted-foreground">•</span>
-                            <span className="text-sm text-muted-foreground">Next meeting: {group.nextMeeting}</span>
+                            <span className="text-sm text-muted-foreground">
+                              {group.members} members
+                            </span>
+                            <span className="text-sm text-muted-foreground">
+                              •
+                            </span>
+                            <span className="text-sm text-muted-foreground">
+                              Next meeting: {group.nextMeeting}
+                            </span>
                           </div>
                         </div>
                         <div className="flex flex-col gap-2">
@@ -204,34 +250,44 @@ export default function ProfilePage() {
             <Card>
               <CardHeader>
                 <CardTitle>Accessibility Settings</CardTitle>
-                <CardDescription>Customize your experience to make Gather easier to use</CardDescription>
+                <CardDescription>
+                  Customize your experience to make Gather easier to use
+                </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex items-center justify-between">
                   <div className="space-y-0.5">
                     <Label htmlFor="high-contrast">High Contrast Mode</Label>
-                    <p className="text-sm text-muted-foreground">Increase contrast for better readability</p>
+                    <p className="text-sm text-muted-foreground">
+                      Increase contrast for better readability
+                    </p>
                   </div>
                   <Switch id="high-contrast" />
                 </div>
                 <div className="flex items-center justify-between">
                   <div className="space-y-0.5">
                     <Label htmlFor="text-to-speech">Text-to-Speech</Label>
-                    <p className="text-sm text-muted-foreground">Enable reading content aloud</p>
+                    <p className="text-sm text-muted-foreground">
+                      Enable reading content aloud
+                    </p>
                   </div>
                   <Switch id="text-to-speech" />
                 </div>
                 <div className="flex items-center justify-between">
                   <div className="space-y-0.5">
                     <Label htmlFor="notifications">Email Notifications</Label>
-                    <p className="text-sm text-muted-foreground">Receive updates about events and groups</p>
+                    <p className="text-sm text-muted-foreground">
+                      Receive updates about events and groups
+                    </p>
                   </div>
                   <Switch id="notifications" defaultChecked />
                 </div>
                 <div className="flex items-center justify-between">
                   <div className="space-y-0.5">
                     <Label htmlFor="reminders">Event Reminders</Label>
-                    <p className="text-sm text-muted-foreground">Get reminders 24 hours before events</p>
+                    <p className="text-sm text-muted-foreground">
+                      Get reminders 24 hours before events
+                    </p>
                   </div>
                   <Switch id="reminders" defaultChecked />
                 </div>
@@ -241,11 +297,14 @@ export default function ProfilePage() {
             <Card>
               <CardHeader>
                 <CardTitle>Need Help?</CardTitle>
-                <CardDescription>Our support team is here to assist you</CardDescription>
+                <CardDescription>
+                  Our support team is here to assist you
+                </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <p>
-                  If you need help using Gather or have any questions, our friendly support team is ready to assist you.
+                  If you need help using Gather or have any questions, our
+                  friendly support team is ready to assist you.
                 </p>
                 <div className="grid gap-4 sm:grid-cols-2">
                   <Button variant="outline" className="w-full">
@@ -263,9 +322,11 @@ export default function ProfilePage() {
           <div className="grid gap-8 lg:grid-cols-3">
             <div>
               <h2 className="text-xl font-bold">Gather</h2>
-              <p className="mt-2 text-muted-foreground">Connecting seniors with shared interests and local events.</p>
+              <p className="mt-2 text-muted-foreground">
+                Connecting seniors with shared interests and local events.
+              </p>
             </div>
-            <div>
+            {/* <div>
               <h3 className="text-lg font-medium mb-2">Quick Links</h3>
               <ul className="space-y-2">
                 <li>
@@ -289,21 +350,27 @@ export default function ProfilePage() {
                   </Link>
                 </li>
               </ul>
-            </div>
+            </div> */}
             <div>
               <h3 className="text-lg font-medium mb-2">Contact Us</h3>
-              <p className="text-muted-foreground">Need assistance? Our support team is here to help.</p>
-              <p className="mt-2 text-muted-foreground">Phone: (555) 123-4567</p>
+              <p className="text-muted-foreground">
+                Need assistance? Our support team is here to help.
+              </p>
+              <p className="mt-2 text-muted-foreground">
+                Phone: (555) 123-4567
+              </p>
               <p className="text-muted-foreground">Email: support@gather.com</p>
             </div>
           </div>
           <div className="mt-8 border-t pt-8 text-center">
-            <p className="text-muted-foreground">© 2025 Gather. All rights reserved.</p>
+            <p className="text-muted-foreground">
+              © 2025 Gather. All rights reserved.
+            </p>
           </div>
         </div>
       </footer>
     </div>
-  )
+  );
 }
 
 // Sample data
@@ -322,7 +389,7 @@ const upcomingEvents = [
     time: "2:00 PM - 3:30 PM",
     location: "Public Library, Meeting Room 2",
   },
-]
+];
 
 const pastEvents = [
   {
@@ -339,7 +406,7 @@ const pastEvents = [
     time: "10:00 AM - 11:30 AM",
     location: "Community Center, Tech Room",
   },
-]
+];
 
 const myGroups = [
   {
@@ -356,5 +423,4 @@ const myGroups = [
     members: 68,
     nextMeeting: "April 16, 2025",
   },
-]
-
+];

@@ -16,6 +16,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+<<<<<<< HEAD
+=======
+import GroupCard from "@/Page_components/GroupCards";
+>>>>>>> 26abf248c9313c35a49a2cb54c0c64f2be70faa9
 import Header from "@/Page_components/Header";
 import { Filter, Search, Users } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -36,9 +40,11 @@ export default function GroupsPage() {
               Connect with people who share your interests
             </p>
           </div>
-          <Button size="lg" className="text-lg">
-            Create Group
-          </Button>
+          <Link to="/creategroupchat">
+            <Button size="lg" className="text-lg">
+              Create Group
+            </Button>
+          </Link>
         </div>
 
         <div className="grid gap-6 md:grid-cols-[250px_1fr] lg:grid-cols-[300px_1fr]">
@@ -312,37 +318,3 @@ const myGroups = [
     nextMeeting: "April 16, 2025",
   },
 ];
-
-function GroupCard({ group }: any) {
-  return (
-    <Card className="h-full">
-      <CardHeader className="p-0">
-        <img
-          src={group.image || "/placeholder.svg"}
-          alt={group.name}
-          className="w-full h-48 object-cover rounded-t-lg"
-        />
-      </CardHeader>
-      <CardContent className="p-6">
-        <CardTitle className="text-xl mb-2">{group.name}</CardTitle>
-        <CardDescription className="text-base mb-4">
-          {group.description}
-        </CardDescription>
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Users className="h-4 w-4 text-muted-foreground" />
-            <span className="text-sm">{group.members} members</span>
-          </div>
-          <span className="text-sm text-muted-foreground">
-            {group.category}
-          </span>
-        </div>
-      </CardContent>
-      <CardFooter className="px-6 pb-6 pt-0">
-        <Button variant="outline" className="w-full text-base">
-          Join Group
-        </Button>
-      </CardFooter>
-    </Card>
-  );
-}

@@ -3,17 +3,21 @@ from flask import Blueprint, request, jsonify
 from database import groups_collection, users_collection  # Import both collections
 from bson.objectid import ObjectId
 import datetime
+from login import token_required
 
 # Create a Blueprint for group-related routes
 groups_bp = Blueprint('groups', __name__)
 
+
 # CREATE: Create a new group
 @groups_bp.route('/create_group', methods=['POST'])
+# @token_required
 def create_group():
     try:
         data = request.get_json()
         group_name = data.get('name')
         owner_id = data.get('user_id')  # The ID of the user creating the group
+        description = data.get('description')
 
         # Validation
         if not group_name or not owner_id:
@@ -28,6 +32,7 @@ def create_group():
         group = {
             "name": group_name,
             "owner_id": ObjectId(owner_id),
+            "description": description,
             "members": [ObjectId(owner_id)],  # Owner is the first member
             "createdAt": datetime.datetime.utcnow()
         }
@@ -43,6 +48,7 @@ def create_group():
 
 # JOIN: Add a user to an existing group
 @groups_bp.route('/join_group', methods=['POST'])
+# @token_required
 def join_group():
     try:
         data = request.get_json()
@@ -86,6 +92,7 @@ def join_group():
 
 # Optional: Get all groups (for testing)
 @groups_bp.route('/groups', methods=['GET'])
+# @token_required
 def get_all_groups():
     try:
         groups = groups_collection.find()
@@ -93,6 +100,7 @@ def get_all_groups():
         for group in groups:
             group['_id'] = str(group['_id'])
             group['owner_id'] = str(group['owner_id'])
+            group['description'] = str(group['description'])
             group['members'] = [str(member) for member in group['members']]
             group['createdAt'] = group['createdAt'].isoformat()
             groups_list.append(group)
@@ -108,6 +116,7 @@ def get_all_groups():
     
 # DELETE: Delete a group (only by owner)
 @groups_bp.route('/group/<group_id>', methods=['DELETE'])
+# @token_required
 def delete_group(group_id):
     try:
         # Get the user_id from the request (assuming it's sent in the body)

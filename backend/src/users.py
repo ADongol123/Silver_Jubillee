@@ -3,6 +3,8 @@ from flask import Blueprint, request, jsonify
 from database import users_collection  # Import the collection from database.py
 import datetime
 from bson.objectid import ObjectId  # For handling MongoDB ObjectIds
+import bcrypt
+from login import token_required
 
 # Create a Blueprint for user-related routes
 users_bp = Blueprint('users', __name__)
@@ -32,11 +34,14 @@ def create_user():
         if users_collection.find_one({"email": email}):
             return jsonify({"error": "Email already exists"}), 409
 
+        # Hash the password
+        hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+
         # Create user document
         user = {
             "username": username,
             "email": email,
-            "password": password,  # In production, hash this!
+            "password": hashed_password,  # In production, hash this!
             "createdAt": datetime.datetime.utcnow(),
             "lastLogin": None,
             "isActive": True
@@ -53,6 +58,7 @@ def create_user():
 
 # READ/EDIT: Get a user by ID
 @users_bp.route('/user/<user_id>', methods=['GET'])
+# @token_required
 def get_user(user_id):
     try:
         # Convert string ID to ObjectId
@@ -65,7 +71,7 @@ def get_user(user_id):
         user['createdAt'] = user['createdAt'].isoformat()
         if user['lastLogin']:
             user['lastLogin'] = user['lastLogin'].isoformat()
-
+        del user['password']  # Don’t return the password
         return jsonify(user), 200
 
     except Exception as e:
@@ -73,6 +79,7 @@ def get_user(user_id):
 
 # UPDATE: Update a user by ID
 @users_bp.route('/user/<user_id>', methods=['PUT'])
+# @token_required
 def update_user(user_id):
     try:
         data = request.get_json()
@@ -96,7 +103,7 @@ def update_user(user_id):
         if 'password' in data:
             if len(data['password']) < 6:
                 return jsonify({"error": "Password must be at least 6 characters"}), 400
-            updates['password'] = data['password']  # In production, hash this!
+            updates['password'] = bcrypt.hashpw(data['password'].encode('utf-8'), bcrypt.gensalt())
 
         if 'isActive' in data:
             updates['isActive'] = data['isActive']
@@ -120,6 +127,7 @@ def update_user(user_id):
 
 # DELETE: Delete a user by ID
 @users_bp.route('/user/<user_id>', methods=['DELETE'])
+# @token_required
 def delete_user(user_id):
     try:
         result = users_collection.delete_one({"_id": ObjectId(user_id)})
@@ -133,6 +141,7 @@ def delete_user(user_id):
     
 # NEW: Get all users
 @users_bp.route('/users', methods=['GET'])
+# @token_required
 def get_all_users():
     try:
         # Fetch all users from the collection
@@ -145,6 +154,7 @@ def get_all_users():
             user['createdAt'] = user['createdAt'].isoformat()  # Convert datetime to ISO string
             if user['lastLogin']:
                 user['lastLogin'] = user['lastLogin'].isoformat()
+            del user['password']  # Don’t return passwords
             users_list.append(user)
 
         return jsonify({

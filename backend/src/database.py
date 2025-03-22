@@ -10,6 +10,7 @@ client = MongoClient(uri)
 # Select the database and collection
 db = client['myAppDB']
 users_collection = db['users']
+groups_collection = db['groups']
 
 # Function to test the connection (optional)
 def test_connection():

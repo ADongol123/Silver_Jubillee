@@ -90,7 +90,7 @@ export default function LoginPage() {
     <div className="flex min-h-screen items-center justify-center px-4 py-12 ">
       <Card className="w-full max-w-md">
         <CardHeader>
-          <CardTitle className="text-2xl">Log In</CardTitle>
+          <CardTitle className="text-2xl mt-10">Log In</CardTitle>
           <CardDescription>
             Enter your credentials to access your account
           </CardDescription>
@@ -133,7 +133,7 @@ export default function LoginPage() {
             <Button type="submit" className="w-full" disabled={isLoading}>
               {isLoading ? "Logging in..." : "Log in"}
             </Button>
-            <div className="flex justify-between w-full text-sm">
+            <div className="text-sm justify-right">
               <Link
                 to="/signup"
                 className="text-primary underline underline-offset-4 hover:text-primary/90"

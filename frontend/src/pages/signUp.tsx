@@ -92,9 +92,9 @@ export default function SignupPage() {
 
   return (
     <div className="flex min-h-screen items-center justify-center px-4 py-12">
-      <Card className="w-full max-w-md">
+      <Card className="w-full max-w-md my-20">
         <CardHeader>
-          <CardTitle className="text-2xl">Sign Up</CardTitle>
+          <CardTitle className="text-2xl mt-10">Sign Up</CardTitle>
           <CardDescription>Create a new account to get started</CardDescription>
         </CardHeader>
         <form onSubmit={handleSubmit}>
@@ -162,7 +162,7 @@ export default function SignupPage() {
             </div>
           </CardContent>
 
-          <CardFooter className="flex flex-col space-y-4">
+          <CardFooter className="flex flex-col space-y-4 mb-10 mt-10">
             <Button type="submit" className="w-full" disabled={isLoading}>
               {isLoading ? "Creating account..." : "Create account"}
             </Button>

@@ -32,7 +32,6 @@ def login():
         # Check if account is active
         if not user.get('isActive', True):
             return jsonify({"error": "Account is deactivated"}), 403
-
         # Verify password
         if not bcrypt.checkpw(password.encode('utf-8'), user['password']):
             return jsonify({"error": "Invalid credentials"}), 401
@@ -49,6 +48,7 @@ def login():
             'email': user['email'],
             'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=24)  # Token expires in 24 hours
         }, SECRET_KEY, algorithm="HS256")
+        print("inside")
 
         return jsonify({
             "message": "Login successful",

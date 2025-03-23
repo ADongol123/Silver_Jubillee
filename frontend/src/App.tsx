@@ -1,26 +1,60 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 import Home from "./pages/home";
-import Groups from "./pages/groups.tsx";
-import ProfilePage from "./pages/profile.tsx";
-import EventDetailPage from "./pages/eventDetails.tsx";
-import GroupChat from "./pages/groupChat.tsx";
-import EventsPage from "./pages/events.tsx";
-import CreateGroupPage from "./pages/createGroup.tsx";
-import LoginPage from "./pages/login.tsx";
-import SignupPage from "./pages/signUp.tsx";
+import Groups from "./pages/groups";
+import ProfilePage from "./pages/profile";
+import EventDetailPage from "./pages/eventDetails";
+import GroupChat from "./pages/groupChat";
+import EventsPage from "./pages/events";
+import CreateGroupPage from "./pages/createGroup";
+import LoginPage from "./pages/login";
+import SignupPage from "./pages/signUp";
 
 function App() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    // Check if the authToken exists in localStorage
+    const authToken = localStorage.getItem("authToken");
+    if (authToken) {
+      setIsAuthenticated(true);
+    }
+  }, []);
+
   return (
     <Routes>
       <Route path="/" element={<Home />} />
-      <Route path="/groups" element={<Groups />} />
-      <Route path="/groupchat" element={<GroupChat />} />
-      <Route path="/creategroupchat" element={<CreateGroupPage />} />
-      <Route path="/events" element={<EventsPage />} />
-      <Route path="/profile" element={<ProfilePage />} />
-      <Route path="/eventDetail" element={<EventDetailPage />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/signup" element={<SignupPage />} />
+
+      {/* Protected Routes */}
+      <Route
+        path="/groups"
+        element={isAuthenticated ? <Groups /> : <Navigate to="/login" />}
+      />
+      <Route
+        path="/groupchat"
+        element={isAuthenticated ? <GroupChat /> : <Navigate to="/login" />}
+      />
+      <Route
+        path="/creategroupchat"
+        element={isAuthenticated ? <CreateGroupPage /> : <Navigate to="/login" />}
+      />
+      <Route
+        path="/events"
+        element={isAuthenticated ? <EventsPage /> : <Navigate to="/login" />}
+      />
+      <Route
+        path="/profile"
+        element={isAuthenticated ? <ProfilePage /> : <Navigate to="/login" />}
+      />
+      <Route
+        path="/eventDetail"
+        element={isAuthenticated ? <EventDetailPage /> : <Navigate to="/login" />}
+      />
+
+      {/* Redirect any unknown route to the home */}
+      <Route path="*" element={<Navigate to="/" />} />
     </Routes>
   );
 }

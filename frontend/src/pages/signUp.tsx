@@ -1,7 +1,6 @@
 "use client";
 
 import type React from "react";
-
 import { useState } from "react";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
@@ -15,7 +14,9 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { postRequest } from "@/api/utils";
+
 
 const signupSchema = z.object({
   username: z.string().min(3, "Username must be at least 3 characters"),
@@ -25,8 +26,8 @@ const signupSchema = z.object({
 });
 
 export default function SignupPage() {
-  //   const router = useRouter()
-  //   const { toast } = useToast()
+  const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     username: "",
     email: "",
@@ -35,12 +36,12 @@ export default function SignupPage() {
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isLoading, setIsLoading] = useState(false);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
 
-    // Clear error when user starts typing
     if (errors[name]) {
       setErrors((prev) => {
         const newErrors = { ...prev };
@@ -53,22 +54,24 @@ export default function SignupPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-
+  
     try {
-      // Validate form data
       const validatedData = signupSchema.parse(formData);
-
-      // Here you would typically send the data to your API
-      // For demo purposes, we'll just simulate a successful signup
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      //   toast({
-      //     title: "Account created!",
-      //     description: "You've successfully signed up.",
-      //   })
-
-      // Redirect to login page
-      //   router.push("/login")
+  
+      // Retrieve Bearer token from localStorage (or wherever it is stored)
+      const token = localStorage.getItem('authToken');
+  
+      // Send data to the backend via postRequest with Bearer token
+      const response = await postRequest("create_user", validatedData, token || "");
+  
+      if (response) {
+        if (response.token) {
+          localStorage.setItem("authToken", response.token);
+        }
+  
+        alert("Registration successful!");
+        navigate("/login");
+      }
     } catch (error) {
       if (error instanceof z.ZodError) {
         const newErrors: Record<string, string> = {};
@@ -79,16 +82,13 @@ export default function SignupPage() {
         });
         setErrors(newErrors);
       } else {
-        // toast({
-        //   title: "Error",
-        //   description: "Something went wrong. Please try again.",
-        //   variant: "destructive",
-        // })
+        console.error("Signup failed:", error);
       }
     } finally {
       setIsLoading(false);
     }
   };
+  
 
   return (
     <div className="flex min-h-screen items-center justify-center px-4 py-12">
@@ -99,6 +99,10 @@ export default function SignupPage() {
         </CardHeader>
         <form onSubmit={handleSubmit}>
           <CardContent className="space-y-4">
+            {successMessage && (
+              <p className="text-sm text-green-600">{successMessage}</p>
+            )}
+
             <div className="space-y-2">
               <Label htmlFor="username">Username</Label>
               <Input

@@ -1,7 +1,3 @@
-"use client";
-
-import type React from "react";
-
 import { useState } from "react";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
@@ -15,22 +11,23 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { postRequest } from "@/api/utils";
 
+// Login schema validation using zod
 const loginSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
   password: z.string().min(1, "Password is required"),
 });
 
 export default function LoginPage() {
-  //   const router = useRouter()
-  //   const { toast } = useToast()
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate(); // Use React Router's navigate to redirect
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -51,49 +48,36 @@ export default function LoginPage() {
     setIsLoading(true);
 
     try {
-      // Validate form data
-      const validatedData = loginSchema.parse(formData);
-
-      // Here you would typically send the data to your authentication API
-      // For demo purposes, we'll just simulate a successful login
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      //   toast({
-      //     title: "Success!",
-      //     description: "You've successfully logged in.",
-      //   });
-
-      //   // Redirect to dashboard or home page
-      //   router.push("/dashboard");
-    } catch (error) {
-      if (error instanceof z.ZodError) {
-        const newErrors: Record<string, string> = {};
-        error.errors.forEach((err) => {
-          if (err.path[0]) {
-            newErrors[err.path[0] as string] = err.message;
-          }
-        });
-        setErrors(newErrors);
-      } else {
-        // toast({
-        //   title: "Login failed",
-        //   description: "Invalid email or password. Please try again.",
-        //   variant: "destructive",
-        // });
+      // Make the API call to login
+      const response = await postRequest("login", formData);
+      console.log(response,"token")
+      if (response?.message != "Login successful") {
+        throw new Error("Invalid email or password.");
       }
+
+      // Parse the response (you might want to adjust this based on your API response)
+      // const data = await response.json();
+
+      // Save the token (if needed) or user data (could be in localStorage, cookies, etc.)
+      console.log(response,"data")
+      localStorage.setItem("authToken", response?.token);
+
+      // Redirect to the dashboard or homepage
+      navigate("/"); // Replace with your actual route
+
+    } catch (error) {
+      console.log(error)
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center px-4 py-12 ">
+    <div className="flex min-h-screen items-center justify-center px-4 py-12">
       <Card className="w-full max-w-md">
         <CardHeader>
           <CardTitle className="text-2xl">Log In</CardTitle>
-          <CardDescription>
-            Enter your credentials to access your account
-          </CardDescription>
+          <CardDescription>Enter your credentials to access your account</CardDescription>
         </CardHeader>
         <form onSubmit={handleSubmit}>
           <CardContent className="space-y-4">
@@ -127,6 +111,10 @@ export default function LoginPage() {
                 <p className="text-sm text-destructive">{errors.password}</p>
               )}
             </div>
+
+            {errors.general && (
+              <p className="text-sm text-destructive">{errors.general}</p>
+            )}
           </CardContent>
 
           <CardFooter className="flex flex-col space-y-4 p-5">

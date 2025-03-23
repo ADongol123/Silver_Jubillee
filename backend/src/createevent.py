@@ -70,26 +70,36 @@ def get_events():
 
         # Build the query
         query = {}
-
+        has_filters = False
         # Filter by event type
         if event_type != 'All Events':
             query['event_type'] = event_type
+            has_filters = True
 
         # Filter by date range
         now = datetime.datetime.utcnow()
-        if date_range == 'Upcoming':
+        if date_range != 'Upcoming':  # Only apply date filter if explicitly set to something other than default
+            if date_range == 'All':  # Assuming 'All' means no date restriction
+                pass  # No date filter applied
+            else:
+                query['date'] = {'$gt': now.isoformat()}  # Default behavior for 'Upcoming'
+            has_filters = True
+        else:
             query['date'] = {'$gt': now.isoformat()}
-
-        # Fetch events from MongoDB
-        events_cursor = events_collection.find(query)
+            
+        
+        if not has_filters and date_range == 'All':  # If no filters and date_range explicitly set to 'All'
+            events_cursor = events_collection.find()  # Fetch all events without any query
+        else:
+            events_cursor = events_collection.find(query)  # Fetch with applied filters
         filtered_events = list(events_cursor)
-
         # Filter by location (within X miles)
-        if location_miles:
+        if location_miles is not None:
             filtered_events = [
                 event for event in filtered_events
                 if calculate_distance(user_coords, event['coordinates']) <= location_miles
             ]
+            has_filters = True
 
         # Sort events
         if sort_by == 'newest':
@@ -100,6 +110,8 @@ def get_events():
         # Convert ObjectId to string for JSON serialization
         for event in filtered_events:
             event['_id'] = str(event['_id'])
+            if 'registered_users' in event:
+                event['registered_users'] = [str(user_id) for user_id in event['registered_users']]
 
         return jsonify({
             "message": "Events retrieved successfully",

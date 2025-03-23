@@ -1,4 +1,4 @@
-// import Link from "next/link"
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -14,6 +14,42 @@ import { Filter, Search } from "lucide-react";
 import { Link } from "react-router-dom";
 
 export default function GroupsPage() {
+  // State to hold groups data
+  const [groups, setGroups] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  // Fetch groups from API on component mount
+  useEffect(() => {
+    const fetchGroups = async () => {
+      try {
+        const token = localStorage.getItem("token"); // Or wherever you store the token
+        const response = await fetch("http://localhost:5000/groups", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch groups");
+        }
+
+        const data = await response.json();
+        setGroups(data.groups); // Assuming your response structure contains 'groups'
+        setLoading(false);
+      } catch (error : any) {
+        setError(error.message);
+        setLoading(false);
+      }
+    };
+
+    fetchGroups();
+  }, []);
+
+
+  console.log(groups,"groups")
   return (
     <div className="min-h-screen bg-background">
       <header className="border-b">
@@ -22,9 +58,7 @@ export default function GroupsPage() {
       <main className="container px-4 py-8 sm:px-6 lg:px-8">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">
-              Interest Groups
-            </h1>
+            <h1 className="text-3xl font-bold tracking-tight">Interest Groups</h1>
             <p className="text-xl text-muted-foreground mt-1">
               Connect with people who share your interests
             </p>
@@ -50,10 +84,7 @@ export default function GroupsPage() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <label
-                    htmlFor="group-category"
-                    className="text-sm font-medium"
-                  >
+                  <label htmlFor="group-category" className="text-sm font-medium">
                     Category
                   </label>
                   <Select defaultValue="all">
@@ -67,17 +98,12 @@ export default function GroupsPage() {
                       <SelectItem value="games">Games & Recreation</SelectItem>
                       <SelectItem value="health">Health & Wellness</SelectItem>
                       <SelectItem value="tech">Technology</SelectItem>
-                      <SelectItem value="outdoors">
-                        Outdoors & Nature
-                      </SelectItem>
+                      <SelectItem value="outdoors">Outdoors & Nature</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
                 <div className="space-y-2">
-                  <label
-                    htmlFor="activity-level"
-                    className="text-sm font-medium"
-                  >
+                  <label htmlFor="activity-level" className="text-sm font-medium">
                     Activity Level
                   </label>
                   <Select defaultValue="all">
@@ -115,62 +141,19 @@ export default function GroupsPage() {
                 </Button>
               </div>
             </div>
-            <div className="rounded-lg border bg-card p-4">
-              <h3 className="text-lg font-medium mb-4">Your Groups</h3>
-              <div className="space-y-3">
-                {myGroups.map((group) => (
-                  <Link
-                    key={group.id}
-                    to={`/groups/${group.id}`}
-                    className="block rounded-md p-2 hover:bg-muted"
-                  >
-                    <div className="font-medium">{group.name}</div>
-                    <div className="text-sm text-muted-foreground">
-                      Next meeting: {group.nextMeeting}
-                    </div>
-                  </Link>
-                ))}
-                <Button variant="ghost" className="w-full text-primary">
-                  View All Your Groups
-                </Button>
-              </div>
-            </div>
           </div>
           <div className="space-y-6">
             <div className="flex items-center justify-between">
-              <h2 className="text-xl font-semibold">Popular Groups (24)</h2>
-              <Select defaultValue="popular">
-                <SelectTrigger className="w-[180px]">
-                  <SelectValue placeholder="Sort by" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="popular">Most Popular</SelectItem>
-                  <SelectItem value="newest">Newest First</SelectItem>
-                  <SelectItem value="active">Most Active</SelectItem>
-                </SelectContent>
-              </Select>
+              <h2 className="text-xl font-semibold">Popular Groups</h2>
             </div>
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {groups.map((group) => (
-                <GroupCard key={group.id} group={group} />
-              ))}
-            </div>
-            <div className="flex justify-center">
-              <div className="flex items-center gap-2">
-                <Button variant="outline" size="icon" className="h-10 w-10">
-                  1
-                </Button>
-                <Button variant="outline" size="icon" className="h-10 w-10">
-                  2
-                </Button>
-                <Button variant="outline" size="icon" className="h-10 w-10">
-                  3
-                </Button>
-                <span className="mx-2">...</span>
-                <Button variant="outline" size="icon" className="h-10 w-10">
-                  8
-                </Button>
-              </div>
+              {loading ? (
+                <div>Loading...</div>
+              ) : error ? (
+                <div>Error: {error}</div>
+              ) : (
+                groups.map((group : any) => <GroupCard key={group.id} group={group} />)
+              )}
             </div>
           </div>
         </div>
@@ -242,68 +225,3 @@ export default function GroupsPage() {
     </div>
   );
 }
-
-// Sample data
-const groups = [
-  {
-    id: 1,
-    name: "Photography Enthusiasts",
-    description: "Share photography tips and go on photo walks together.",
-    members: 42,
-    category: "Arts & Crafts",
-    image: "/placeholder.svg?height=200&width=300",
-  },
-  {
-    id: 2,
-    name: "Walking Club",
-    description: "Weekly walks in different parks and neighborhoods.",
-    members: 68,
-    category: "Health & Wellness",
-    image: "/placeholder.svg?height=200&width=300",
-  },
-  {
-    id: 3,
-    name: "Crafts & Hobbies",
-    description: "Share your crafting projects and learn new skills.",
-    members: 35,
-    category: "Arts & Crafts",
-    image: "/placeholder.svg?height=200&width=300",
-  },
-  {
-    id: 4,
-    name: "Book Lovers",
-    description: "Monthly book discussions and author events.",
-    members: 51,
-    category: "Books & Literature",
-    image: "/placeholder.svg?height=200&width=300",
-  },
-  {
-    id: 5,
-    name: "Technology Help",
-    description: "Learn about smartphones, computers, and the internet.",
-    members: 29,
-    category: "Technology",
-    image: "/placeholder.svg?height=200&width=300",
-  },
-  {
-    id: 6,
-    name: "Gardening Group",
-    description: "Tips, tricks, and seasonal gardening advice.",
-    members: 47,
-    category: "Outdoors & Nature",
-    image: "/placeholder.svg?height=200&width=300",
-  },
-];
-
-const myGroups = [
-  {
-    id: 1,
-    name: "Photography Enthusiasts",
-    nextMeeting: "April 22, 2025",
-  },
-  {
-    id: 2,
-    name: "Walking Club",
-    nextMeeting: "April 16, 2025",
-  },
-];

@@ -33,7 +33,7 @@ function App() {
         element={isAuthenticated ? <Groups /> : <Navigate to="/login" />}
       />
       <Route
-        path="/groupchat"
+        path="/groupchat/:id"
         element={isAuthenticated ? <GroupChat /> : <Navigate to="/login" />}
       />
       <Route

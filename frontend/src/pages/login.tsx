@@ -61,7 +61,7 @@ export default function LoginPage() {
       // Save the token (if needed) or user data (could be in localStorage, cookies, etc.)
       console.log(response,"data")
       localStorage.setItem("authToken", response?.token);
-
+      localStorage.setItem("userId",response?.user_id)
       // Redirect to the dashboard or homepage
       navigate("/"); // Replace with your actual route
 

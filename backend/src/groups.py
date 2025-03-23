@@ -57,7 +57,7 @@ def join_group():
     try:
         data = request.get_json()
         group_id = data.get('group_id')
-        user_id = data.get('user_id')
+        user_id = str(request.current_user['_id'])
 
         # Validation
         if not group_id or not user_id:
@@ -96,7 +96,7 @@ def join_group():
 
 # Optional: Get all groups (for testing)
 @groups_bp.route('/groups', methods=['GET'])
-# @token_required
+@token_required
 def get_all_groups():
     try:
         groups = groups_collection.find()
@@ -125,8 +125,7 @@ def get_all_groups():
 def delete_group(group_id):
     try:
         # Get the user_id from the request (assuming it's sent in the body)
-        data = request.get_json()
-        user_id = data.get('user_id')
+        user_id = str(request.current_user['_id'])
 
         if not user_id:
             return jsonify({"error": "user_id is required"}), 400

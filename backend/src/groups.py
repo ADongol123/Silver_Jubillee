@@ -18,12 +18,15 @@ def create_group():
         group_name = data.get('name')
         owner_id = data.get('user_id')  # The ID of the user creating the group
         description = data.get('description')
+        interests = data.get('interests',[])
 
         # Validation
         if not group_name or not owner_id:
             return jsonify({"error": "Group name and user_id are required"}), 400
 
-        # Verify the user exists
+        if not isinstance(interests, list) or not all(isinstance(interest, str) for interest in interests):
+            return jsonify({"error": "Interests must be a list of strings"}), 400
+        
         owner = users_collection.find_one({"_id": ObjectId(owner_id)})
         if not owner:
             return jsonify({"error": "User not found"}), 404
@@ -33,6 +36,7 @@ def create_group():
             "name": group_name,
             "owner_id": ObjectId(owner_id),
             "description": description,
+            "interests": interests,
             "members": [ObjectId(owner_id)],  # Owner is the first member
             "createdAt": datetime.datetime.utcnow()
         }
@@ -101,6 +105,7 @@ def get_all_groups():
             group['_id'] = str(group['_id'])
             group['owner_id'] = str(group['owner_id'])
             group['description'] = str(group['description'])
+            group['interests'] = group.get('interests', [])
             group['members'] = [str(member) for member in group['members']]
             group['createdAt'] = group['createdAt'].isoformat()
             groups_list.append(group)

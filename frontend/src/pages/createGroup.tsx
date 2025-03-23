@@ -35,10 +35,11 @@ import {
   Plus,
   Users,
 } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { postRequest } from "@/api/utils";
 
 export default function CreateGroupPage() {
-  //   const router = useRouter()
+  const navigate  = useNavigate()
   const [step, setStep] = useState(1);
   const [isCreating, setIsCreating] = useState(false);
   const [groupName, setGroupName] = useState("");
@@ -47,14 +48,34 @@ export default function CreateGroupPage() {
   const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
   const [inviteEmail, setInviteEmail] = useState("");
   const [invitedEmails, setInvitedEmails] = useState<string[]>([]);
+  const [error, setError] = useState(null);
 
-  const handleCreateGroup = () => {
+  const handleCreateGroup = async () => {
     setIsCreating(true);
-    // Simulate group creation
-    setTimeout(() => {
+    setError(null);
+    
+    // Get token from localStorage
+    const token : any = localStorage.getItem('authToken'); // Adjust key name as per your app
+    const userId = localStorage.getItem('userId'); // You might want to get this from localStorage too
+    
+    const groupData = {
+      name: groupName,
+      user_id: userId,
+      description: groupDescription,
+      interests: selectedInterests
+    };
+
+    try {
+      const result = await postRequest('create_group', groupData, token);
+      console.log('Group created successfully:', result);
+      // Add navigation here if using router
+      navigate('/groups');
+    } catch (error:any) {
+      console.error('Error creating group:', error);
+      setError(error.message || 'Failed to create group. Please try again.');
+    } finally {
       setIsCreating(false);
-      //   router.push("/groups")
-    }, 1500);
+    }
   };
 
   const toggleInterest = (interest: string) => {
@@ -88,25 +109,16 @@ export default function CreateGroupPage() {
         <div className="container flex h-16 items-center px-4 sm:px-6 lg:px-8">
           <h1 className="text-2xl font-bold text-primary">Gather</h1>
           <nav className="ml-auto flex gap-4 sm:gap-6">
-            <Link
-              to="/"
-              className="text-lg font-medium text-muted-foreground hover:text-primary"
-            >
+            <Link to="/" className="text-lg font-medium text-muted-foreground hover:text-primary">
               Home
             </Link>
-            <Link
-              to="/events"
-              className="text-lg font-medium text-muted-foreground hover:text-primary"
-            >
+            <Link to="/events" className="text-lg font-medium text-muted-foreground hover:text-primary">
               Events
             </Link>
             <Link to="/groups" className="text-lg font-medium text-primary">
               Groups
             </Link>
-            <Link
-              to="/profile"
-              className="text-lg font-medium text-muted-foreground hover:text-primary"
-            >
+            <Link to="/profile" className="text-lg font-medium text-muted-foreground hover:text-primary">
               My Profile
             </Link>
           </nav>
@@ -126,49 +138,15 @@ export default function CreateGroupPage() {
           <div className="mb-8">
             <div className="relative">
               <div className="flex items-center justify-between">
-                <div
-                  className={`flex h-12 w-12 items-center justify-center rounded-full border-2 ${
-                    step >= 1
-                      ? "border-primary bg-primary text-primary-foreground"
-                      : "border-muted-foreground"
-                  }`}
-                >
-                  {step > 1 ? (
-                    <Check className="h-6 w-6" />
-                  ) : (
-                    <span className="text-lg">1</span>
-                  )}
+                <div className={`flex h-12 w-12 items-center justify-center rounded-full border-2 ${step >= 1 ? "border-primary bg-primary text-primary-foreground" : "border-muted-foreground"}`}>
+                  {step > 1 ? <Check className="h-6 w-6" /> : <span className="text-lg">1</span>}
                 </div>
-                <div
-                  className={`h-1 flex-1 ${
-                    step >= 2 ? "bg-primary" : "bg-muted"
-                  }`}
-                ></div>
-                <div
-                  className={`flex h-12 w-12 items-center justify-center rounded-full border-2 ${
-                    step >= 2
-                      ? "border-primary bg-primary text-primary-foreground"
-                      : "border-muted-foreground"
-                  }`}
-                >
-                  {step > 2 ? (
-                    <Check className="h-6 w-6" />
-                  ) : (
-                    <span className="text-lg">2</span>
-                  )}
+                <div className={`h-1 flex-1 ${step >= 2 ? "bg-primary" : "bg-muted"}`}></div>
+                <div className={`flex h-12 w-12 items-center justify-center rounded-full border-2 ${step >= 2 ? "border-primary bg-primary text-primary-foreground" : "border-muted-foreground"}`}>
+                  {step > 2 ? <Check className="h-6 w-6" /> : <span className="text-lg">2</span>}
                 </div>
-                <div
-                  className={`h-1 flex-1 ${
-                    step >= 3 ? "bg-primary" : "bg-muted"
-                  }`}
-                ></div>
-                <div
-                  className={`flex h-12 w-12 items-center justify-center rounded-full border-2 ${
-                    step >= 3
-                      ? "border-primary bg-primary text-primary-foreground"
-                      : "border-muted-foreground"
-                  }`}
-                >
+                <div className={`h-1 flex-1 ${step >= 3 ? "bg-primary" : "bg-muted"}`}></div>
+                <div className={`flex h-12 w-12 items-center justify-center rounded-full border-2 ${step >= 3 ? "border-primary bg-primary text-primary-foreground" : "border-muted-foreground"}`}>
                   <span className="text-lg">3</span>
                 </div>
               </div>
@@ -191,10 +169,7 @@ export default function CreateGroupPage() {
               <CardContent className="space-y-6">
                 <div className="space-y-2">
                   <div className="flex items-center gap-2">
-                    <Label
-                      htmlFor="group-name"
-                      className="text-base font-medium"
-                    >
+                    <Label htmlFor="group-name" className="text-base font-medium">
                       Group Name
                     </Label>
                     <TooltipProvider>
@@ -203,10 +178,7 @@ export default function CreateGroupPage() {
                           <HelpCircle className="h-4 w-4 text-muted-foreground" />
                         </TooltipTrigger>
                         <TooltipContent className="max-w-xs">
-                          <p>
-                            Choose a clear, descriptive name that reflects the
-                            purpose of your group.
-                          </p>
+                          <p>Choose a clear, descriptive name that reflects the purpose of your group.</p>
                         </TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
@@ -221,10 +193,7 @@ export default function CreateGroupPage() {
                 </div>
                 <div className="space-y-2">
                   <div className="flex items-center gap-2">
-                    <Label
-                      htmlFor="group-description"
-                      className="text-base font-medium"
-                    >
+                    <Label htmlFor="group-description" className="text-base font-medium">
                       Description
                     </Label>
                     <TooltipProvider>
@@ -233,10 +202,7 @@ export default function CreateGroupPage() {
                           <HelpCircle className="h-4 w-4 text-muted-foreground" />
                         </TooltipTrigger>
                         <TooltipContent className="max-w-xs">
-                          <p>
-                            Describe what your group is about, what activities
-                            you'll do, and who might be interested in joining.
-                          </p>
+                          <p>Describe what your group is about, what activities you'll do, and who might be interested in joining.</p>
                         </TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
@@ -251,10 +217,7 @@ export default function CreateGroupPage() {
                 </div>
                 <div className="space-y-2">
                   <div className="flex items-center gap-2">
-                    <Label
-                      htmlFor="group-category"
-                      className="text-base font-medium"
-                    >
+                    <Label htmlFor="group-category" className="text-base font-medium">
                       Category
                     </Label>
                     <TooltipProvider>
@@ -263,18 +226,12 @@ export default function CreateGroupPage() {
                           <HelpCircle className="h-4 w-4 text-muted-foreground" />
                         </TooltipTrigger>
                         <TooltipContent className="max-w-xs">
-                          <p>
-                            Select a category that best represents your group's
-                            main focus.
-                          </p>
+                          <p>Select a category that best represents your group's main focus.</p>
                         </TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
                   </div>
-                  <Select
-                    value={groupCategory}
-                    onValueChange={setGroupCategory}
-                  >
+                  <Select value={groupCategory} onValueChange={setGroupCategory}>
                     <SelectTrigger id="group-category" className="text-lg h-14">
                       <SelectValue placeholder="Select a category" />
                     </SelectTrigger>
@@ -284,13 +241,9 @@ export default function CreateGroupPage() {
                       <SelectItem value="games">Games & Recreation</SelectItem>
                       <SelectItem value="health">Health & Wellness</SelectItem>
                       <SelectItem value="tech">Technology</SelectItem>
-                      <SelectItem value="outdoors">
-                        Outdoors & Nature
-                      </SelectItem>
+                      <SelectItem value="outdoors">Outdoors & Nature</SelectItem>
                       <SelectItem value="social">Social Activities</SelectItem>
-                      <SelectItem value="learning">
-                        Learning & Education
-                      </SelectItem>
+                      <SelectItem value="learning">Learning & Education</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -301,16 +254,12 @@ export default function CreateGroupPage() {
                       <Camera className="h-10 w-10 text-muted-foreground" />
                     </div>
                     <div className="space-y-2">
-                      <Button
-                        variant="outline"
-                        className="text-base h-12 w-full sm:w-auto"
-                      >
+                      <Button variant="outline" className="text-base h-12 w-full sm:w-auto">
                         <Image className="mr-2 h-5 w-5" />
                         Upload Photo
                       </Button>
                       <p className="text-sm text-muted-foreground">
-                        Upload a photo that represents your group. This will be
-                        displayed on your group page.
+                        Upload a photo that represents your group. This will be displayed on your group page.
                       </p>
                     </div>
                   </div>
@@ -335,16 +284,12 @@ export default function CreateGroupPage() {
               <CardHeader className="pb-4">
                 <CardTitle className="text-2xl">Select Interests</CardTitle>
                 <CardDescription className="text-base">
-                  Choose topics your group will discuss or activities you'll
-                  enjoy together
+                  Choose topics your group will discuss or activities you'll enjoy together
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="mb-6">
-                  <Label
-                    htmlFor="search-interests"
-                    className="text-base font-medium mb-2 block"
-                  >
+                  <Label htmlFor="search-interests" className="text-base font-medium mb-2 block">
                     Search Interests
                   </Label>
                   <Input
@@ -365,16 +310,12 @@ export default function CreateGroupPage() {
                       onClick={() => toggleInterest(interest.name)}
                     >
                       <div className="flex items-center justify-between">
-                        <span className="text-lg font-medium">
-                          {interest.name}
-                        </span>
+                        <span className="text-lg font-medium">{interest.name}</span>
                         {selectedInterests.includes(interest.name) && (
                           <Check className="h-5 w-5 text-primary" />
                         )}
                       </div>
-                      <p className="text-sm text-muted-foreground mt-1">
-                        {interest.description}
-                      </p>
+                      <p className="text-sm text-muted-foreground mt-1">{interest.description}</p>
                     </div>
                   ))}
                 </div>
@@ -437,11 +378,13 @@ export default function CreateGroupPage() {
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
+                {error && (
+                  <div className="p-4 bg-red-100 text-red-700 rounded-lg">
+                    {error}
+                  </div>
+                )}
                 <div className="space-y-2">
-                  <Label
-                    htmlFor="invite-email"
-                    className="text-base font-medium"
-                  >
+                  <Label htmlFor="invite-email" className="text-base font-medium">
                     Invite by Email
                   </Label>
                   <div className="flex gap-2">
@@ -470,8 +413,7 @@ export default function CreateGroupPage() {
                     </Button>
                   </div>
                   <p className="text-sm text-muted-foreground">
-                    Enter email addresses of people you'd like to invite to your
-                    group.
+                    Enter email addresses of people you'd like to invite to your group.
                   </p>
                 </div>
 
@@ -512,21 +454,14 @@ export default function CreateGroupPage() {
                         <div className="flex items-center gap-3">
                           <div className="h-12 w-12 rounded-full bg-muted overflow-hidden">
                             <img
-                              src={
-                                member.avatar ||
-                                "/placeholder.svg?height=48&width=48"
-                              }
+                              src={member.avatar || "/placeholder.svg?height=48&width=48"}
                               alt={member.name}
                               className="h-full w-full object-cover"
                             />
                           </div>
                           <div>
-                            <div className="font-medium text-base">
-                              {member.name}
-                            </div>
-                            <div className="text-sm text-muted-foreground">
-                              {member.interests}
-                            </div>
+                            <div className="font-medium text-base">{member.name}</div>
+                            <div className="text-sm text-muted-foreground">{member.interests}</div>
                           </div>
                         </div>
                         <Button variant="outline" className="text-base">
@@ -543,9 +478,7 @@ export default function CreateGroupPage() {
                     Helpful Tip
                   </h3>
                   <p className="mt-2 text-sm">
-                    You can always invite more members after your group is
-                    created. Your group will also be discoverable by others with
-                    similar interests.
+                    You can always invite more members after your group is created. Your group will also be discoverable by others with similar interests.
                   </p>
                 </div>
               </CardContent>
@@ -571,10 +504,10 @@ export default function CreateGroupPage() {
                       Creating Group...
                     </>
                   ) : (
-                    <Link to="/creategroupchat">
-                        Create Group
-                        <Users className="ml-2 h-5 w-5" />
-                    </Link>
+                    <>
+                      Create Group
+                      <Users className="ml-2 h-5 w-5" />
+                    </>
                   )}
                 </Button>
               </CardFooter>
@@ -609,34 +542,22 @@ export default function CreateGroupPage() {
               <h3 className="text-lg font-medium mb-2">Quick Links</h3>
               <ul className="space-y-2">
                 <li>
-                  <Link
-                    to="/about"
-                    className="text-muted-foreground hover:text-primary"
-                  >
+                  <Link to="/about" className="text-muted-foreground hover:text-primary">
                     About Us
                   </Link>
                 </li>
                 <li>
-                  <Link
-                    to="/help"
-                    className="text-muted-foreground hover:text-primary"
-                  >
+                  <Link to="/help" className="text-muted-foreground hover:text-primary">
                     Help & Support
                   </Link>
                 </li>
                 <li>
-                  <Link
-                    to="/contact"
-                    className="text-muted-foreground hover:text-primary"
-                  >
+                  <Link to="/contact" className="text-muted-foreground hover:text-primary">
                     Contact
                   </Link>
                 </li>
                 <li>
-                  <Link
-                    to="/accessibility"
-                    className="text-muted-foreground hover:text-primary"
-                  >
+                  <Link to="/accessibility" className="text-muted-foreground hover:text-primary">
                     Accessibility
                   </Link>
                 </li>
@@ -647,16 +568,12 @@ export default function CreateGroupPage() {
               <p className="text-muted-foreground">
                 Need assistance? Our support team is here to help.
               </p>
-              <p className="mt-2 text-muted-foreground">
-                Phone: (555) 123-4567
-              </p>
+              <p className="mt-2 text-muted-foreground">Phone: (555) 123-4567</p>
               <p className="text-muted-foreground">Email: support@gather.com</p>
             </div>
           </div>
           <div className="mt-8 border-t pt-8 text-center">
-            <p className="text-muted-foreground">
-              © 2025 Gather. All rights reserved.
-            </p>
+            <p className="text-muted-foreground">© 2025 Gather. All rights reserved.</p>
           </div>
         </div>
       </footer>
@@ -664,93 +581,24 @@ export default function CreateGroupPage() {
   );
 }
 
-// Sample data
 const interests = [
-  {
-    id: 1,
-    name: "Photography",
-    description: "Taking and sharing photos",
-  },
-  {
-    id: 2,
-    name: "Gardening",
-    description: "Growing plants and flowers",
-  },
-  {
-    id: 3,
-    name: "Reading",
-    description: "Books and literature discussions",
-  },
-  {
-    id: 4,
-    name: "Walking",
-    description: "Group walks and hikes",
-  },
-  {
-    id: 5,
-    name: "Cooking",
-    description: "Recipes and cooking techniques",
-  },
-  {
-    id: 6,
-    name: "Crafts",
-    description: "Handmade arts and crafts",
-  },
-  {
-    id: 7,
-    name: "Technology",
-    description: "Learning about computers and devices",
-  },
-  {
-    id: 8,
-    name: "Music",
-    description: "Enjoying and discussing music",
-  },
-  {
-    id: 9,
-    name: "Travel",
-    description: "Sharing travel experiences",
-  },
-  {
-    id: 10,
-    name: "History",
-    description: "Local and world history",
-  },
-  {
-    id: 11,
-    name: "Movies",
-    description: "Film watching and discussion",
-  },
-  {
-    id: 12,
-    name: "Board Games",
-    description: "Playing and learning games",
-  },
+  { id: 1, name: "Photography", description: "Taking and sharing photos" },
+  { id: 2, name: "Gardening", description: "Growing plants and flowers" },
+  { id: 3, name: "Reading", description: "Books and literature discussions" },
+  { id: 4, name: "Walking", description: "Group walks and hikes" },
+  { id: 5, name: "Cooking", description: "Recipes and cooking techniques" },
+  { id: 6, name: "Crafts", description: "Handmade arts and crafts" },
+  { id: 7, name: "Technology", description: "Learning about computers and devices" },
+  { id: 8, name: "Music", description: "Enjoying and discussing music" },
+  { id: 9, name: "Travel", description: "Sharing travel experiences" },
+  { id: 10, name: "History", description: "Local and world history" },
+  { id: 11, name: "Movies", description: "Film watching and discussion" },
+  { id: 12, name: "Board Games", description: "Playing and learning games" },
 ];
 
 const suggestedMembers = [
-  {
-    id: 1,
-    name: "Eleanor Thompson",
-    interests: "Photography, Gardening",
-    avatar: "/placeholder.svg?height=48&width=48",
-  },
-  {
-    id: 2,
-    name: "Robert Wilson",
-    interests: "Reading, Walking",
-    avatar: "/placeholder.svg?height=48&width=48",
-  },
-  {
-    id: 3,
-    name: "Patricia Davis",
-    interests: "Cooking, Crafts",
-    avatar: "/placeholder.svg?height=48&width=48",
-  },
-  {
-    id: 4,
-    name: "William Brown",
-    interests: "Technology, Music",
-    avatar: "/placeholder.svg?height=48&width=48",
-  },
+  { id: 1, name: "Eleanor Thompson", interests: "Photography, Gardening", avatar: "/placeholder.svg?height=48&width=48" },
+  { id: 2, name: "Robert Wilson", interests: "Reading, Walking", avatar: "/placeholder.svg?height=48&width=48" },
+  { id: 3, name: "Patricia Davis", interests: "Cooking, Crafts", avatar: "/placeholder.svg?height=48&width=48" },
+  { id: 4, name: "William Brown", interests: "Technology, Music", avatar: "/placeholder.svg?height=48&width=48" },
 ];

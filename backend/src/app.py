@@ -1,14 +1,19 @@
-# app.py
 from flask import Flask
+from flask_cors import CORS  # Import the CORS module
 from users import users_bp  # Import the users Blueprint
 from groups import groups_bp
 from login import login_bp
 from recommender import recommend_bp
 from createevent import events_bp
 from database import test_connection  # Import to verify connection
+from chat import chat_bp, socketio  # New imports
+
 
 # Initialize Flask app
 app = Flask(__name__)
+
+# Enable CORS for all routes (allow all origins)
+CORS(app)
 
 # Register the users Blueprint
 app.register_blueprint(users_bp)
@@ -16,6 +21,8 @@ app.register_blueprint(groups_bp)
 app.register_blueprint(events_bp)
 app.register_blueprint(login_bp)
 app.register_blueprint(recommend_bp)
+app.register_blueprint(chat_bp)
+
 
 # Root route (optional)
 @app.route('/')

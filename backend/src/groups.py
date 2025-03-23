@@ -57,7 +57,7 @@ def join_group():
     try:
         data = request.get_json()
         group_id = data.get('group_id')
-        user_id = data.get('user_id')
+        user_id = str(request.current_user['_id'])
 
         # Validation
         if not group_id or not user_id:
@@ -96,7 +96,7 @@ def join_group():
 
 # Optional: Get all groups (for testing)
 @groups_bp.route('/groups', methods=['GET'])
-# @token_required
+@token_required
 def get_all_groups():
     try:
         groups = groups_collection.find()
@@ -125,8 +125,7 @@ def get_all_groups():
 def delete_group(group_id):
     try:
         # Get the user_id from the request (assuming it's sent in the body)
-        data = request.get_json()
-        user_id = data.get('user_id')
+        user_id = str(request.current_user['_id'])
 
         if not user_id:
             return jsonify({"error": "user_id is required"}), 400
@@ -148,6 +147,41 @@ def delete_group(group_id):
         return jsonify({
             "message": "Group deleted successfully",
             "group_id": group_id
+        }), 200
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    
+
+# NEW: Get groups by user_id (via path parameter)
+@groups_bp.route('/my_groups/<user_id>', methods=['GET'])
+# @token_required
+def get_my_groups(user_id):
+    try:
+        # Validate user_id format and existence
+        try:
+            user = users_collection.find_one({"_id": ObjectId(user_id)})
+            if not user:
+                return jsonify({"error": "User not found"}), 404
+        except ValueError:
+            return jsonify({"error": "Invalid user_id format"}), 400
+
+        # Find groups where the user is a member
+        groups = groups_collection.find({"members": ObjectId(user_id)})
+        groups_list = []
+        for group in groups:
+            group['_id'] = str(group['_id'])
+            group['owner_id'] = str(group['owner_id'])
+            group['description'] = str(group.get('description', ''))
+            group['interests'] = group.get('interests', [])
+            group['members'] = [str(member) for member in group['members']]
+            group['createdAt'] = group['createdAt'].isoformat()
+            groups_list.append(group)
+
+        return jsonify({
+            "message": "User's groups retrieved successfully",
+            "groups": groups_list,
+            "count": len(groups_list)
         }), 200
 
     except Exception as e:

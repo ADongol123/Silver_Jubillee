@@ -257,7 +257,7 @@ export default function GroupsPage() {
         <div className="container px-4 py-8 sm:px-6 lg:px-8">
           <div className="grid gap-8 lg:grid-cols-3">
             <div>
-              <h2 className="text-xl font-bold">Gather</h2>
+              <h2 className="text-xl font-bold">AgeTogther</h2>
               <p className="mt-2 text-muted-foreground">
                 Connecting seniors with shared interests and local events.
               </p>
@@ -312,7 +312,7 @@ export default function GroupsPage() {
           </div>
           <div className="mt-8 border-t pt-8 text-center">
             <p className="text-muted-foreground">
-              © 2025 Gather. All rights reserved.
+              © 2025 AgeTogther. All rights reserved.
             </p>
           </div>
         </div>

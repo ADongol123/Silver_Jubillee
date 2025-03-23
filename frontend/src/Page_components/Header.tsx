@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Button } from "@/components/ui/button";
 
 const Header = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -8,25 +9,22 @@ const Header = () => {
 
   useEffect(() => {
     const token = localStorage.getItem("authToken");
-    console.log(token);
     setIsLoggedIn(!!token);
   }, []);
 
   const handleLogout = () => {
-    console.log(isLoggedIn);
-    console.log("At handle logout");
     localStorage.clear();
     setIsLoggedIn(false);
-    navigate("/login");
+    navigate("/");
   };
 
   return (
     <div>
       <div className="flex h-16 items-center px-4 sm:px-6 lg:px-8 ">
-        <h1 className="text-2xl font-bold text-primary">Gather</h1>
+        <h1 className="text-2xl font-bold text-primary">AgeTogether</h1>
         <nav className="ml-auto flex gap-4 sm:gap-6">
           <Link
-            to="/"
+            to="/home"
             className="text-lg font-medium text-muted-foreground hover:text-primary"
           >
             Home
@@ -47,9 +45,9 @@ const Header = () => {
             My Profile
           </Link>
           {isLoggedIn ? (
-            <Link to="/login" onSubmit={handleLogout}>
+            <Button onClick={handleLogout} type="button">
               Logout
-            </Link>
+            </Button>
           ) : (
             <Link to="/login">Login</Link>
           )}

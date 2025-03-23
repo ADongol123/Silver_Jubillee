@@ -9,21 +9,23 @@ import EventsPage from "./pages/events";
 import CreateGroupPage from "./pages/createGroup";
 import LoginPage from "./pages/login";
 import SignupPage from "./pages/signUp";
+import LandingPage from "./pages/landing";
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const authToken = localStorage.getItem("authToken");
 
   useEffect(() => {
     // Check if the authToken exists in localStorage
-    const authToken = localStorage.getItem("authToken");
     if (authToken) {
       setIsAuthenticated(true);
     }
-  }, []);
+  }, [authToken]);
 
   return (
     <Routes>
-      <Route path="/" element={<Home />} />
+      <Route path="/" element={<LandingPage />} />
+      <Route path="/home" element={<Home />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/signup" element={<SignupPage />} />
 
@@ -38,7 +40,9 @@ function App() {
       />
       <Route
         path="/creategroupchat"
-        element={isAuthenticated ? <CreateGroupPage /> : <Navigate to="/login" />}
+        element={
+          isAuthenticated ? <CreateGroupPage /> : <Navigate to="/login" />
+        }
       />
       <Route
         path="/events"
@@ -50,7 +54,9 @@ function App() {
       />
       <Route
         path="/eventDetail"
-        element={isAuthenticated ? <EventDetailPage /> : <Navigate to="/login" />}
+        element={
+          isAuthenticated ? <EventDetailPage /> : <Navigate to="/login" />
+        }
       />
 
       {/* Redirect any unknown route to the home */}

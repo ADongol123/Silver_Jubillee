@@ -37,9 +37,15 @@ def login():
             return jsonify({"error": "Invalid credentials"}), 401
 
         # Update lastLogin
+        current_time = datetime.datetime.utcnow()
         users_collection.update_one(
             {"_id": user['_id']},
-            {"$set": {"lastLogin": datetime.datetime.utcnow()}}
+            {
+                "$set": {
+                    "lastLogin": current_time,
+                    "last_active": current_time.isoformat()  # Set initial last_active on login
+                }
+            }
         )
 
         # Generate JWT
@@ -70,10 +76,32 @@ def token_required(f):
         try:
             if token.startswith("Bearer "):
                 token = token.split(" ")[1]
-            jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
+            data= jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
+            user_id = data['user_id']
+            user = users_collection.find_one({"_id": ObjectId(user_id)})
+            last_active = user.get('last_active')
+            if last_active:
+                last_active = datetime.datetime.fromisoformat(last_active)
+                current_time = datetime.datetime.utcnow()
+                inactivity_duration = (current_time - last_active).total_seconds() / 60  # Convert to hours
+
+                # Check if the user has been inactive for more than 2 hours
+                if inactivity_duration > 10:
+                    return jsonify({"error": "Session expired due to inactivity. Please log in again."}), 401
+
+            # Update the user's last_active timestamp
+            users_collection.update_one(
+                {"_id": ObjectId(user_id)},
+                {"$set": {"last_active": datetime.datetime.utcnow().isoformat()}}
+            )
+            request.current_user = user
+            if not user:
+                return jsonify({"error": "User not found"}), 404
         except jwt.ExpiredSignatureError:
             return jsonify({"error": "Token has expired"}), 401
         except jwt.InvalidTokenError:
             return jsonify({"error": "Invalid token"}), 401
+        except Exception as e:
+            return jsonify({"error": str(e)}), 500
         return f(*args, **kwargs)
     return decorated

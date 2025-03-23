@@ -29,9 +29,25 @@ app.register_blueprint(chat_bp)
 def home():
     return "Welcome to the User API!"
 
+# Initialize group cache for recommendations on startup
+with app.app_context():
+    from recommender import init_group_cache
+    init_group_cache()
+
 if __name__ == '__main__':
     if test_connection():
         print("Starting Flask app with valid DB connection...")
-        socketio.run(debug=True, host='0.0.0.0', port=5000)
+        # socketio.run(app, debug=True, host='0.0.0.0', port=5000)
+        app.run(debug=True, host='0.0.0.0', port=5000)
     else:
         print("Cannot start Flask app due to DB connection failure.")
+
+
+# Initialize group cache for recommendations on startup
+with app.app_context():
+    try:
+        from recommender import init_group_cache
+        init_group_cache()
+        print("Group cache initialized successfully.")
+    except Exception as e:
+        print(f"Failed to initialize group cache: {e}")

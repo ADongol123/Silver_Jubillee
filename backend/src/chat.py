@@ -1,7 +1,7 @@
 # chat.py
 from flask import Blueprint, request
 from flask_socketio import SocketIO, emit, join_room, leave_room
-from database import groups_collection, db  # Assuming uri is set in database.py
+from database import groups_collection, db
 from login import token_required, SECRET_KEY
 import jwt
 from bson.objectid import ObjectId
@@ -10,8 +10,8 @@ import datetime
 # Create a Blueprint for chat-related routes
 chat_bp = Blueprint('chat', __name__)
 
-# Initialize SocketIO (will be attached to the Flask app in app.py)
-socketio = SocketIO(cors_allowed_origins="*")  # Allow all origins for testing; restrict in production
+# Initialize SocketIO (async_mode set in app.py)
+socketio = SocketIO(cors_allowed_origins="*")
 
 # MongoDB collection for chat messages
 messages_collection = db["messages"]
@@ -21,14 +21,14 @@ messages_collection = db["messages"]
 def handle_connect():
     token = request.args.get('token')
     if not token:
-        return False  # Disconnect if no token
+        return False
     try:
         if token.startswith("Bearer "):
             token = token.split(" ")[1]
         payload = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
-        request.user_id = payload['user_id']  # Store user_id in request context
+        request.user_id = payload['user_id']
     except (jwt.ExpiredSignatureError, jwt.InvalidTokenError):
-        return False  # Disconnect if token is invalid or expired
+        return False
     print(f"Client connected: {request.user_id}")
 
 @socketio.on('disconnect')
@@ -43,7 +43,6 @@ def on_join_group(data):
         emit('error', {'error': 'group_id is required'})
         return
 
-    # Verify group exists and user is a member
     try:
         group = groups_collection.find_one({"_id": ObjectId(group_id)})
         if not group:
@@ -82,7 +81,6 @@ def handle_message(data):
         emit('error', {'error': 'group_id and message are required'})
         return
 
-    # Verify group exists and user is a member
     try:
         group = groups_collection.find_one({"_id": ObjectId(group_id)})
         if not group:
@@ -95,7 +93,6 @@ def handle_message(data):
         emit('error', {'error': 'Invalid group_id format'})
         return
 
-    # Save message to MongoDB
     timestamp = datetime.datetime.utcnow()
     msg_doc = {
         "group_id": ObjectId(group_id),
@@ -105,7 +102,6 @@ def handle_message(data):
     }
     messages_collection.insert_one(msg_doc)
 
-    # Broadcast message to group via WebSocket
     emit('message', {
         "user_id": request.user_id,
         "message": message,
@@ -118,7 +114,6 @@ def handle_message(data):
 @token_required
 def get_message_history(group_id):
     try:
-        # Verify group exists
         try:
             group = groups_collection.find_one({"_id": ObjectId(group_id)})
             if not group:
@@ -126,7 +121,6 @@ def get_message_history(group_id):
         except ValueError:
             return jsonify({"error": "Invalid group_id format"}), 400
 
-        # Fetch messages from MongoDB
         messages = messages_collection.find({"group_id": ObjectId(group_id)}).sort("timestamp", 1)
         messages_list = [
             {

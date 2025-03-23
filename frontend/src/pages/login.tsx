@@ -50,7 +50,7 @@ export default function LoginPage() {
     try {
       // Make the API call to login
       const response = await postRequest("login", formData);
-      console.log(response,"token")
+      console.log(response, "token");
       if (response?.message != "Login successful") {
         throw new Error("Invalid email or password.");
       }
@@ -59,14 +59,13 @@ export default function LoginPage() {
       // const data = await response.json();
 
       // Save the token (if needed) or user data (could be in localStorage, cookies, etc.)
-      console.log(response,"data")
+      console.log(response, "data");
       localStorage.setItem("authToken", response?.token);
-      localStorage.setItem("userId",response?.user_id)
+      localStorage.setItem("userId", response?.user_id);
       // Redirect to the dashboard or homepage
-      navigate("/"); // Replace with your actual route
-
+      navigate("/home"); // Replace with your actual route
     } catch (error) {
-      console.log(error)
+      console.log(error);
     } finally {
       setIsLoading(false);
     }
@@ -128,7 +127,7 @@ export default function LoginPage() {
                 to="/signup"
                 className="text-primary underline underline-offset-4 hover:text-primary/90"
               >
-                Create account
+                Don't have an account yet? Sign up now
               </Link>
             </div>
           </CardFooter>

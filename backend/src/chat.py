@@ -1,8 +1,8 @@
 # chat.py
 from flask import Blueprint, request
 from flask_socketio import SocketIO, emit, join_room, leave_room
-from database import groups_collection, db  # Assuming uri is already set in database.py
-from login import token_required, SECRET_KEY  # For JWT verification
+from database import groups_collection, db  # Assuming uri is set in database.py
+from login import token_required, SECRET_KEY
 import jwt
 from bson.objectid import ObjectId
 import datetime
@@ -96,30 +96,37 @@ def handle_message(data):
         return
 
     # Save message to MongoDB
+    timestamp = datetime.datetime.utcnow()
     msg_doc = {
         "group_id": ObjectId(group_id),
         "user_id": ObjectId(request.user_id),
         "message": message,
-        "timestamp": datetime.datetime.utcnow()
+        "timestamp": timestamp
     }
     messages_collection.insert_one(msg_doc)
 
-    # Broadcast message to group
+    # Broadcast message to group via WebSocket
     emit('message', {
         "user_id": request.user_id,
         "message": message,
-        "timestamp": msg_doc["timestamp"].isoformat()
+        "timestamp": timestamp.isoformat()
     }, room=group_id)
     print(f"Message sent to group {group_id} by {request.user_id}: {message}")
 
-# REST API to get message history (optional)
+# REST API to get message history
 @chat_bp.route('/group/<group_id>/messages', methods=['GET'])
 @token_required
 def get_message_history(group_id):
     try:
-        group = groups_collection.find_one({"_id": ObjectId(group_id)})
-        if not group:
-            return jsonify({"error": "Group not found"}), 404
+        # Verify group exists
+        try:
+            group = groups_collection.find_one({"_id": ObjectId(group_id)})
+            if not group:
+                return jsonify({"error": "Group not found"}), 404
+        except ValueError:
+            return jsonify({"error": "Invalid group_id format"}), 400
+
+        # Fetch messages from MongoDB
         messages = messages_collection.find({"group_id": ObjectId(group_id)}).sort("timestamp", 1)
         messages_list = [
             {
@@ -129,12 +136,12 @@ def get_message_history(group_id):
             }
             for msg in messages
         ]
+
         return jsonify({
             "group_id": group_id,
             "messages": messages_list,
             "count": len(messages_list)
         }), 200
-    except ValueError:
-        return jsonify({"error": "Invalid group_id format"}), 400
+
     except Exception as e:
         return jsonify({"error": str(e)}), 500

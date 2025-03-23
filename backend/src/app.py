@@ -6,7 +6,7 @@ from login import login_bp
 from recommender import recommend_bp
 from createevent import events_bp
 from database import test_connection  # Import to verify connection
-from chat import chat_bp, socketio  # New imports
+from chat import chat_bp, socketio  
 
 
 # Initialize Flask app
@@ -32,6 +32,6 @@ def home():
 if __name__ == '__main__':
     if test_connection():
         print("Starting Flask app with valid DB connection...")
-        app.run(debug=True, host='0.0.0.0', port=5000)
+        socketio.run(debug=True, host='0.0.0.0', port=5000)
     else:
         print("Cannot start Flask app due to DB connection failure.")

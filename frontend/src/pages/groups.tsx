@@ -39,7 +39,7 @@ export default function GroupsPage() {
         const data = await response.json();
         setGroups(data.groups); // Assuming your response structure contains 'groups'
         setLoading(false);
-      } catch (error : any) {
+      } catch (error: any) {
         setError(error.message);
         setLoading(false);
       }
@@ -48,8 +48,7 @@ export default function GroupsPage() {
     fetchGroups();
   }, []);
 
-
-  console.log(groups,"groups")
+  console.log(groups, "groups");
   return (
     <div className="min-h-screen bg-background">
       <header className="border-b">
@@ -58,7 +57,9 @@ export default function GroupsPage() {
       <main className="container px-4 py-8 sm:px-6 lg:px-8">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">Interest Groups</h1>
+            <h1 className="text-3xl font-bold tracking-tight">
+              Interest Groups
+            </h1>
             <p className="text-xl text-muted-foreground mt-1">
               Connect with people who share your interests
             </p>
@@ -84,7 +85,10 @@ export default function GroupsPage() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <label htmlFor="group-category" className="text-sm font-medium">
+                  <label
+                    htmlFor="group-category"
+                    className="text-sm font-medium"
+                  >
                     Category
                   </label>
                   <Select defaultValue="all">
@@ -98,12 +102,17 @@ export default function GroupsPage() {
                       <SelectItem value="games">Games & Recreation</SelectItem>
                       <SelectItem value="health">Health & Wellness</SelectItem>
                       <SelectItem value="tech">Technology</SelectItem>
-                      <SelectItem value="outdoors">Outdoors & Nature</SelectItem>
+                      <SelectItem value="outdoors">
+                        Outdoors & Nature
+                      </SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
                 <div className="space-y-2">
-                  <label htmlFor="activity-level" className="text-sm font-medium">
+                  <label
+                    htmlFor="activity-level"
+                    className="text-sm font-medium"
+                  >
                     Activity Level
                   </label>
                   <Select defaultValue="all">
@@ -152,7 +161,9 @@ export default function GroupsPage() {
               ) : error ? (
                 <div>Error: {error}</div>
               ) : (
-                groups.map((group : any) => <GroupCard key={group.id} group={group} />)
+                groups.map((group: any) => (
+                  <GroupCard key={group.id} group={group} />
+                ))
               )}
             </div>
           </div>
@@ -162,7 +173,7 @@ export default function GroupsPage() {
         <div className="container px-4 py-8 sm:px-6 lg:px-8">
           <div className="grid gap-8 lg:grid-cols-3">
             <div>
-              <h2 className="text-xl font-bold">Gather</h2>
+              <h2 className="text-xl font-bold">AgeTogther</h2>
               <p className="mt-2 text-muted-foreground">
                 Connecting seniors with shared interests and local events.
               </p>
@@ -217,7 +228,7 @@ export default function GroupsPage() {
           </div>
           <div className="mt-8 border-t pt-8 text-center">
             <p className="text-muted-foreground">
-              © 2025 Gather. All rights reserved.
+              © 2025 AgeTogther. All rights reserved.
             </p>
           </div>
         </div>

@@ -21,10 +21,10 @@ const Header = () => {
   return (
     <div>
       <div className="flex h-16 items-center px-4 sm:px-6 lg:px-8 ">
-        <h1 className="text-2xl font-bold text-primary">Gather</h1>
+        <h1 className="text-2xl font-bold text-primary">AgeTogether</h1>
         <nav className="ml-auto flex gap-4 sm:gap-6">
           <Link
-            to="/"
+            to="/home"
             className="text-lg font-medium text-muted-foreground hover:text-primary"
           >
             Home

@@ -29,7 +29,7 @@ export default function Home() {
           <div className="grid gap-6 lg:grid-cols-2 lg:gap-12 items-center">
             <div className="space-y-4">
               <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
-                Welcome to Gather
+                Welcome to AgeTogether
               </h2>
               <p className="text-xl text-muted-foreground">
                 Connect with people who share your interests and discover local
@@ -90,7 +90,7 @@ export default function Home() {
               </h2>
               <p className="text-lg mb-4">
                 We're here to help you connect with your community. Our support
-                team can guide you through using Gather.
+                team can guide you through using AgeTogether.
               </p>
               <Button size="lg" className="text-lg">
                 Contact Support
@@ -135,7 +135,7 @@ export default function Home() {
         <div className="container px-4 py-8 sm:px-6 lg:px-8">
           <div className="grid gap-8 lg:grid-cols-3">
             <div>
-              <h2 className="text-xl font-bold">Gather</h2>
+              <h2 className="text-xl font-bold">AgeTogther</h2>
               <p className="mt-2 text-muted-foreground">
                 Connecting seniors with shared interests and local events.
               </p>
@@ -190,7 +190,7 @@ export default function Home() {
           </div>
           <div className="mt-8 border-t pt-8 text-center">
             <p className="text-muted-foreground">
-              © 2025 Gather. All rights reserved.
+              © 2025 AgeTogether. All rights reserved.
             </p>
           </div>
         </div>

@@ -1,35 +1,50 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useState, useRef, useEffect } from "react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { ScrollArea } from "@/components/ui/scroll-area"
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
-import { FileText, Image, Info, Mic, Phone, Send, Smile, Users, Video } from "lucide-react"
-import { Link } from "react-router-dom"
+import { useState, useRef, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import {
+  FileText,
+  Image,
+  Info,
+  Mic,
+  Phone,
+  Send,
+  Smile,
+  Users,
+  Video,
+} from "lucide-react";
+import { Link } from "react-router-dom";
 
 export default function GroupChatPage() {
-  const [messages, setMessages] = useState<Message[]>(initialMessages)
-  const [newMessage, setNewMessage] = useState("")
-  const [isTyping, setIsTyping] = useState(false)
-  const messagesEndRef = useRef<HTMLDivElement>(null)
+  const [messages, setMessages] = useState<Message[]>(initialMessages);
+  const [newMessage, setNewMessage] = useState("");
+  const [isTyping, setIsTyping] = useState(false);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // Scroll to bottom when messages change
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
-  }, [messages])
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
 
   // Simulate someone typing
   useEffect(() => {
     const typingTimeout = setTimeout(() => {
       if (messages.length > 0 && !isTyping) {
-        const randomIndex = Math.floor(Math.random() * 5)
+        const randomIndex = Math.floor(Math.random() * 5);
         if (randomIndex === 0) {
-          setIsTyping(true)
+          setIsTyping(true);
           setTimeout(() => {
             const newMsg: Message = {
               id: Date.now().toString(),
@@ -40,16 +55,16 @@ export default function GroupChatPage() {
               },
               text: "Has anyone tried the new community garden? I heard they have some interesting workshops coming up.",
               timestamp: new Date().toISOString(),
-            }
-            setMessages([...messages, newMsg])
-            setIsTyping(false)
-          }, 3000)
+            };
+            setMessages([...messages, newMsg]);
+            setIsTyping(false);
+          }, 3000);
         }
       }
-    }, 10000)
+    }, 10000);
 
-    return () => clearTimeout(typingTimeout)
-  }, [messages, isTyping])
+    return () => clearTimeout(typingTimeout);
+  }, [messages, isTyping]);
 
   const handleSendMessage = () => {
     if (newMessage.trim()) {
@@ -62,35 +77,44 @@ export default function GroupChatPage() {
         },
         text: newMessage,
         timestamp: new Date().toISOString(),
-      }
-      setMessages([...messages, newMsg])
-      setNewMessage("")
+      };
+      setMessages([...messages, newMsg]);
+      setNewMessage("");
     }
-  }
+  };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault()
-      handleSendMessage()
+      e.preventDefault();
+      handleSendMessage();
     }
-  }
+  };
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <header className="border-b">
         <div className="container flex h-16 items-center px-4 sm:px-6 lg:px-8">
-          <h1 className="text-2xl font-bold text-primary">Gather</h1>
+          <h1 className="text-2xl font-bold text-primary">AgeTogther</h1>
           <nav className="ml-auto flex gap-4 sm:gap-6">
-            <Link to="/" className="text-lg font-medium text-muted-foreground hover:text-primary">
+            <Link
+              to="/"
+              className="text-lg font-medium text-muted-foreground hover:text-primary"
+            >
               Home
             </Link>
-            <Link to="/events" className="text-lg font-medium text-muted-foreground hover:text-primary">
+            <Link
+              to="/events"
+              className="text-lg font-medium text-muted-foreground hover:text-primary"
+            >
               Events
             </Link>
             <Link to="/groups" className="text-lg font-medium text-primary">
               Groups
             </Link>
-            <Link to="/profile" className="text-lg font-medium text-muted-foreground hover:text-primary">
+            <Link
+              to="/profile"
+              className="text-lg font-medium text-muted-foreground hover:text-primary"
+            >
               My Profile
             </Link>
           </nav>
@@ -106,10 +130,11 @@ export default function GroupChatPage() {
               </div>
               <div>
                 <h2 className="text-xl font-bold">Photography Enthusiasts</h2>
-                <div className="text-sm text-muted-foreground">42 members • 5 online</div>
+                <div className="text-sm text-muted-foreground">
+                  42 members • 5 online
+                </div>
               </div>
             </div>
-            
           </div>
 
           <div className="grid md:grid-cols-[1fr_250px] gap-4 flex-1 overflow-hidden mt-4">
@@ -117,17 +142,26 @@ export default function GroupChatPage() {
               <ScrollArea className="flex-1 pr-4">
                 <div className="space-y-4 pb-4">
                   <div className="text-center">
-                    <div className="text-sm text-muted-foreground">April 15, 2025</div>
+                    <div className="text-sm text-muted-foreground">
+                      April 15, 2025
+                    </div>
                   </div>
 
                   {messages.map((message) => (
-                    <MessageBubble key={message.id} message={message} isCurrentUser={message.sender.id === "user1"} />
+                    <MessageBubble
+                      key={message.id}
+                      message={message}
+                      isCurrentUser={message.sender.id === "user1"}
+                    />
                   ))}
 
                   {isTyping && (
                     <div className="flex items-start gap-3 max-w-[80%]">
                       <Avatar className="h-10 w-10">
-                        <AvatarImage src="/placeholder.svg?height=40&width=40" alt="Eleanor Thompson" />
+                        <AvatarImage
+                          src="/placeholder.svg?height=40&width=40"
+                          alt="Eleanor Thompson"
+                        />
                         <AvatarFallback>ET</AvatarFallback>
                       </Avatar>
                       <div className="bg-muted rounded-2xl rounded-tl-none px-4 py-2 text-lg">
@@ -158,7 +192,11 @@ export default function GroupChatPage() {
                       <TooltipProvider>
                         <Tooltip>
                           <TooltipTrigger asChild>
-                            <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full">
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-8 w-8 rounded-full"
+                            >
                               <Smile className="h-5 w-5 text-muted-foreground" />
                               <span className="sr-only">Add emoji</span>
                             </Button>
@@ -172,7 +210,11 @@ export default function GroupChatPage() {
                       <TooltipProvider>
                         <Tooltip>
                           <TooltipTrigger asChild>
-                            <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full">
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-8 w-8 rounded-full"
+                            >
                               <Image className="h-5 w-5 text-muted-foreground" />
                               <span className="sr-only">Add image</span>
                             </Button>
@@ -186,7 +228,11 @@ export default function GroupChatPage() {
                       <TooltipProvider>
                         <Tooltip>
                           <TooltipTrigger asChild>
-                            <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full">
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-8 w-8 rounded-full"
+                            >
                               <Mic className="h-5 w-5 text-muted-foreground" />
                               <span className="sr-only">Voice message</span>
                             </Button>
@@ -218,13 +264,23 @@ export default function GroupChatPage() {
                 </TabsList>
                 <TabsContent value="members" className="pt-4">
                   <div className="space-y-2">
-                    <div className="text-sm font-medium text-muted-foreground mb-2">Online • 5</div>
+                    <div className="text-sm font-medium text-muted-foreground mb-2">
+                      Online • 5
+                    </div>
                     {onlineMembers.map((member) => (
-                      <div key={member.id} className="flex items-center gap-2 p-2 rounded-lg hover:bg-muted">
+                      <div
+                        key={member.id}
+                        className="flex items-center gap-2 p-2 rounded-lg hover:bg-muted"
+                      >
                         <div className="relative">
                           <Avatar className="h-8 w-8">
-                            <AvatarImage src={member.avatar} alt={member.name} />
-                            <AvatarFallback>{member.name.charAt(0)}</AvatarFallback>
+                            <AvatarImage
+                              src={member.avatar}
+                              alt={member.name}
+                            />
+                            <AvatarFallback>
+                              {member.name.charAt(0)}
+                            </AvatarFallback>
                           </Avatar>
                           <span className="absolute bottom-0 right-0 h-2 w-2 rounded-full bg-green-500 ring-1 ring-background"></span>
                         </div>
@@ -232,12 +288,19 @@ export default function GroupChatPage() {
                       </div>
                     ))}
 
-                    <div className="text-sm font-medium text-muted-foreground mt-4 mb-2">Offline • 37</div>
+                    <div className="text-sm font-medium text-muted-foreground mt-4 mb-2">
+                      Offline • 37
+                    </div>
                     {offlineMembers.map((member) => (
-                      <div key={member.id} className="flex items-center gap-2 p-2 rounded-lg hover:bg-muted">
+                      <div
+                        key={member.id}
+                        className="flex items-center gap-2 p-2 rounded-lg hover:bg-muted"
+                      >
                         <Avatar className="h-8 w-8">
                           <AvatarImage src={member.avatar} alt={member.name} />
-                          <AvatarFallback>{member.name.charAt(0)}</AvatarFallback>
+                          <AvatarFallback>
+                            {member.name.charAt(0)}
+                          </AvatarFallback>
                         </Avatar>
                         <div className="text-sm font-medium">{member.name}</div>
                       </div>
@@ -246,12 +309,19 @@ export default function GroupChatPage() {
                 </TabsContent>
                 <TabsContent value="media" className="pt-4">
                   <div className="space-y-4">
-                    <div className="text-sm font-medium text-muted-foreground mb-2">Recent Photos</div>
+                    <div className="text-sm font-medium text-muted-foreground mb-2">
+                      Recent Photos
+                    </div>
                     <div className="grid grid-cols-3 gap-2">
                       {Array.from({ length: 6 }).map((_, i) => (
-                        <div key={i} className="aspect-square rounded-md overflow-hidden bg-muted">
+                        <div
+                          key={i}
+                          className="aspect-square rounded-md overflow-hidden bg-muted"
+                        >
                           <img
-                            src={`/placeholder.svg?height=80&width=80&text=Photo ${i + 1}`}
+                            src={`/placeholder.svg?height=80&width=80&text=Photo ${
+                              i + 1
+                            }`}
                             alt={`Shared photo ${i + 1}`}
                             className="h-full w-full object-cover"
                           />
@@ -259,19 +329,38 @@ export default function GroupChatPage() {
                       ))}
                     </div>
 
-                    <div className="text-sm font-medium text-muted-foreground mb-2">Shared Files</div>
+                    <div className="text-sm font-medium text-muted-foreground mb-2">
+                      Shared Files
+                    </div>
                     <div className="space-y-2">
                       {[
-                        { name: "Photography_Tips.pdf", size: "2.4 MB", date: "Apr 12" },
-                        { name: "Meeting_Notes.docx", size: "1.1 MB", date: "Apr 10" },
-                        { name: "Event_Schedule.xlsx", size: "0.8 MB", date: "Apr 5" },
+                        {
+                          name: "Photography_Tips.pdf",
+                          size: "2.4 MB",
+                          date: "Apr 12",
+                        },
+                        {
+                          name: "Meeting_Notes.docx",
+                          size: "1.1 MB",
+                          date: "Apr 10",
+                        },
+                        {
+                          name: "Event_Schedule.xlsx",
+                          size: "0.8 MB",
+                          date: "Apr 5",
+                        },
                       ].map((file, i) => (
-                        <div key={i} className="flex items-center gap-2 p-2 rounded-lg hover:bg-muted">
+                        <div
+                          key={i}
+                          className="flex items-center gap-2 p-2 rounded-lg hover:bg-muted"
+                        >
                           <div className="h-8 w-8 rounded bg-primary/10 flex items-center justify-center">
                             <FileText className="h-4 w-4 text-primary" />
                           </div>
                           <div className="flex-1 min-w-0">
-                            <div className="text-sm font-medium truncate">{file.name}</div>
+                            <div className="text-sm font-medium truncate">
+                              {file.name}
+                            </div>
                             <div className="text-xs text-muted-foreground">
                               {file.size} • {file.date}
                             </div>
@@ -287,28 +376,39 @@ export default function GroupChatPage() {
         </div>
       </div>
     </div>
-  )
+  );
 }
 
 interface ChatUser {
-  id: string
-  name: string
-  avatar: string
+  id: string;
+  name: string;
+  avatar: string;
 }
 
 interface Message {
-  id: string
-  sender: ChatUser
-  text: string
-  timestamp: string
+  id: string;
+  sender: ChatUser;
+  text: string;
+  timestamp: string;
 }
 
-function MessageBubble({ message, isCurrentUser }: { message: Message; isCurrentUser: boolean }) {
-  const time = new Date(message.timestamp).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+function MessageBubble({
+  message,
+  isCurrentUser,
+}: {
+  message: Message;
+  isCurrentUser: boolean;
+}) {
+  const time = new Date(message.timestamp).toLocaleTimeString([], {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
 
   return (
     <div
-      className={`flex items-start gap-3 ${isCurrentUser ? "flex-row-reverse" : ""} max-w-[80%] ${isCurrentUser ? "ml-auto" : "mr-auto"}`}
+      className={`flex items-start gap-3 ${
+        isCurrentUser ? "flex-row-reverse" : ""
+      } max-w-[80%] ${isCurrentUser ? "ml-auto" : "mr-auto"}`}
     >
       {!isCurrentUser && (
         <Avatar className="h-10 w-10">
@@ -326,16 +426,22 @@ function MessageBubble({ message, isCurrentUser }: { message: Message; isCurrent
         }
       `}
       >
-        {!isCurrentUser && <div className="font-medium text-sm mb-1">{message.sender.name}</div>}
+        {!isCurrentUser && (
+          <div className="font-medium text-sm mb-1">{message.sender.name}</div>
+        )}
         <div>{message.text}</div>
         <div
-          className={`text-xs mt-1 text-right ${isCurrentUser ? "text-primary-foreground/70" : "text-muted-foreground"}`}
+          className={`text-xs mt-1 text-right ${
+            isCurrentUser
+              ? "text-primary-foreground/70"
+              : "text-muted-foreground"
+          }`}
         >
           {time}
         </div>
       </div>
     </div>
-  )
+  );
 }
 
 // Sample data
@@ -400,21 +506,60 @@ const initialMessages: Message[] = [
     text: "I've been practicing macro photography! The key is to use a tripod and adjust your aperture for better depth of field. I can show you some techniques this weekend.",
     timestamp: "2025-04-15T09:42:00Z",
   },
-]
+];
 
 const onlineMembers = [
-  { id: "1", name: "Margaret Johnson", avatar: "/placeholder.svg?height=40&width=40" },
-  { id: "2", name: "Eleanor Thompson", avatar: "/placeholder.svg?height=40&width=40" },
-  { id: "3", name: "Robert Wilson", avatar: "/placeholder.svg?height=40&width=40" },
-  { id: "4", name: "Patricia Davis", avatar: "/placeholder.svg?height=40&width=40" },
-  { id: "5", name: "William Brown", avatar: "/placeholder.svg?height=40&width=40" },
-]
+  {
+    id: "1",
+    name: "Margaret Johnson",
+    avatar: "/placeholder.svg?height=40&width=40",
+  },
+  {
+    id: "2",
+    name: "Eleanor Thompson",
+    avatar: "/placeholder.svg?height=40&width=40",
+  },
+  {
+    id: "3",
+    name: "Robert Wilson",
+    avatar: "/placeholder.svg?height=40&width=40",
+  },
+  {
+    id: "4",
+    name: "Patricia Davis",
+    avatar: "/placeholder.svg?height=40&width=40",
+  },
+  {
+    id: "5",
+    name: "William Brown",
+    avatar: "/placeholder.svg?height=40&width=40",
+  },
+];
 
 const offlineMembers = [
-  { id: "6", name: "James Miller", avatar: "/placeholder.svg?height=40&width=40" },
-  { id: "7", name: "Mary Taylor", avatar: "/placeholder.svg?height=40&width=40" },
-  { id: "8", name: "John Anderson", avatar: "/placeholder.svg?height=40&width=40" },
-  { id: "9", name: "Linda Martinez", avatar: "/placeholder.svg?height=40&width=40" },
-  { id: "10", name: "David Garcia", avatar: "/placeholder.svg?height=40&width=40" },
-]
-
+  {
+    id: "6",
+    name: "James Miller",
+    avatar: "/placeholder.svg?height=40&width=40",
+  },
+  {
+    id: "7",
+    name: "Mary Taylor",
+    avatar: "/placeholder.svg?height=40&width=40",
+  },
+  {
+    id: "8",
+    name: "John Anderson",
+    avatar: "/placeholder.svg?height=40&width=40",
+  },
+  {
+    id: "9",
+    name: "Linda Martinez",
+    avatar: "/placeholder.svg?height=40&width=40",
+  },
+  {
+    id: "10",
+    name: "David Garcia",
+    avatar: "/placeholder.svg?height=40&width=40",
+  },
+];

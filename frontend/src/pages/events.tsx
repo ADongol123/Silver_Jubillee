@@ -17,13 +17,13 @@ export default function EventsPage() {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  console.log(events,"events")
+  console.log(events, "events");
   // Fetch groups from API on component mount
   useEffect(() => {
     const fetchEvents = async () => {
       try {
         const token = localStorage.getItem("authToken"); // Or wherever you store the token
-        console.log(token,"token")
+        console.log(token, "token");
         const response = await fetch("http://localhost:5000/events", {
           method: "GET",
           headers: {
@@ -51,7 +51,7 @@ export default function EventsPage() {
     <div className="min-h-screen bg-background">
       <header className="border-b">
         <div className="container flex h-16 items-center px-4 sm:px-6 lg:px-8">
-          <h1 className="text-2xl font-bold text-primary">Gather</h1>
+          <h1 className="text-2xl font-bold text-primary">AgeTogther</h1>
           <nav className="ml-auto flex gap-4 sm:gap-6">
             <Link
               to="/"
@@ -217,7 +217,7 @@ export default function EventsPage() {
         <div className="container px-4 py-8 sm:px-6 lg:px-8">
           <div className="grid gap-8 lg:grid-cols-3">
             <div>
-              <h2 className="text-xl font-bold">Gather</h2>
+              <h2 className="text-xl font-bold">AgeTogther</h2>
               <p className="mt-2 text-muted-foreground">
                 Connecting seniors with shared interests and local events.
               </p>
@@ -272,7 +272,7 @@ export default function EventsPage() {
           </div>
           <div className="mt-8 border-t pt-8 text-center">
             <p className="text-muted-foreground">
-              © 2025 Gather. All rights reserved.
+              © 2025 AgeTogther. All rights reserved.
             </p>
           </div>
         </div>

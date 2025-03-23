@@ -14,7 +14,7 @@ export default function LandingPage() {
             className="flex items-center gap-2 text-lg font-semibold"
           >
             <Users className="h-6 w-6 text-primary" />
-            <span>ConnectWell</span>
+            <span>AgeTogether</span>
           </Link>
           <Button asChild size="lg" className="text-base">
             <Link to="/login">Login</Link>
@@ -25,16 +25,15 @@ export default function LandingPage() {
         <section className="w-full py-12 md:py-20 lg:py-28">
           <div className="grid items-center gap-6 px-4 md:px-6 lg:grid-cols-2 lg:gap-10">
             <div className="space-y-6">
-              <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl">
-                Stay Connected with Your Loved Ones
-              </h1>
+              <h3 className="text-6xl font-bold sm:text-3xl md:text-5xl">
+                From Isolation to Connection, Your Journey Starts Here.
+              </h3>
               <p className="text-xl text-muted-foreground md:text-2xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                ConnectWell is a simple, easy-to-use platform designed to help
-                seniors stay connected with family and friends, reducing social
-                isolation and improving wellbeing.
+                Take the first step toward friendships, support, and shared
+                moments that matter.
               </p>
               <Button asChild size="lg" className="text-lg">
-                <Link to="#">Get Started</Link>
+                <Link to="/login">Get Started</Link>
               </Button>
             </div>
             <img
@@ -217,7 +216,7 @@ export default function LandingPage() {
               </div>
               <div className="mx-auto w-full max-w-sm space-y-4">
                 <Button asChild size="lg" className="w-full text-lg">
-                  <Link to="#">Sign Up Now</Link>
+                  <Link to="/signUp">Sign Up Now</Link>
                 </Button>
                 <p className="text-center text-sm text-muted-foreground">
                   Already have an account?{" "}
@@ -241,10 +240,10 @@ export default function LandingPage() {
               className="flex items-center gap-2 text-lg font-semibold"
             >
               <Users className="h-6 w-6 text-primary" />
-              <span>ConnectWell</span>
+              <span>AgeTogether</span>
             </Link>
             <p className="text-sm text-muted-foreground">
-              © {new Date().getFullYear()} ConnectWell. All rights reserved.
+              © {new Date().getFullYear()} AgeTogether. All rights reserved.
             </p>
           </div>
         </div>

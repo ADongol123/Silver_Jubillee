@@ -13,14 +13,14 @@ import LandingPage from "./pages/landing";
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const authToken = localStorage.getItem("authToken");
 
   useEffect(() => {
     // Check if the authToken exists in localStorage
-    const authToken = localStorage.getItem("authToken");
     if (authToken) {
       setIsAuthenticated(true);
     }
-  }, []);
+  }, [authToken]);
 
   return (
     <Routes>

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -12,34 +12,85 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Switch } from "@/components/ui/switch";
 import { Calendar, Clock, MapPin, Settings, User } from "lucide-react";
 import Header from "@/Page_components/Header";
+import { getRequest } from "@/api/utils";
 
 export default function ProfilePage() {
-  const [fontSize, setFontSize] = useState("medium");
+  const [upcomingEvents, setUpcomingEvents] = useState([]);
+  const [myGroups, setMyGroups] = useState([]);
+  const [loadingEvents, setLoadingEvents] = useState(true);
+  const [loadingMyGroups, setLoadingMyGroups] = useState(true);
+  const [error, setError] = useState("");
+  const userId = localStorage.getItem("userId");
 
-  const increaseFontSize = () => {
-    if (fontSize === "medium") setFontSize("large");
-    if (fontSize === "large") setFontSize("x-large");
-  };
+  useEffect(() => {
+    const fetchEvents = async () => {
+      try {
+        const token = localStorage.getItem("authToken"); // Or wherever you store the token
+        console.log(token, "token");
+        const response = await fetch(`http://localhost:5000/events/${userId}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
-  const decreaseFontSize = () => {
-    if (fontSize === "x-large") setFontSize("large");
-    if (fontSize === "large") setFontSize("medium");
-  };
+        if (!response.ok) {
+          throw new Error("Failed to fetch groups");
+        }
 
+        const data = await response.json();
+        console.log(data);
+        setUpcomingEvents(data); // Assuming your response structure contains 'groups'
+        setLoadingEvents(false);
+      } catch (error: any) {
+        setError(error.message);
+        setLoadingEvents(false);
+      }
+    };
+
+    const fetchGroups = async () => {
+      try {
+        const token = localStorage.getItem("authToken"); // Or wherever you store the token
+        console.log(token, "token");
+        const response = await fetch(
+          `http://localhost:5000/my_groups/${userId}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch groups");
+        }
+
+        const data = await response.json();
+        console.log("Fetching groups");
+        console.log(data);
+        setMyGroups(data);
+        setLoadingMyGroups(false);
+      } catch (error: any) {
+        setError(error.message);
+        setLoadingMyGroups(false);
+      }
+    };
+
+    fetchEvents();
+    fetchGroups();
+  }, []);
   return (
     <div
       className="min-h-screen bg-background"
       style={{
-        fontSize:
-          fontSize === "medium"
-            ? "1rem"
-            : fontSize === "large"
-            ? "1.125rem"
-            : "1.25rem",
+        fontSize: "1rem",
       }}
     >
       <header className="border-b">
-       <Header/>
+        <Header />
       </header>
       <main className="px-4 py-8 sm:px-6 lg:px-8">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
@@ -48,26 +99,6 @@ export default function ProfilePage() {
             <p className="text-xl text-muted-foreground mt-1">
               Manage your profile and preferences
             </p>
-          </div>
-          <div className="flex items-center gap-2">
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={decreaseFontSize}
-              disabled={fontSize === "medium"}
-            >
-              <span className="text-lg">A-</span>
-              <span className="sr-only">Decrease font size</span>
-            </Button>
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={increaseFontSize}
-              disabled={fontSize === "x-large"}
-            >
-              <span className="text-lg">A+</span>
-              <span className="sr-only">Increase font size</span>
-            </Button>
           </div>
         </div>
 
@@ -119,14 +150,13 @@ export default function ProfilePage() {
           </Card>
           <div className="space-y-8">
             <Tabs defaultValue="upcoming">
-              <TabsList className="grid w-full grid-cols-3">
+              <TabsList className="w-full grid-cols-3">
                 <TabsTrigger value="upcoming">Upcoming Events</TabsTrigger>
-                <TabsTrigger value="past">Past Events</TabsTrigger>
                 <TabsTrigger value="groups">My Groups</TabsTrigger>
               </TabsList>
               <TabsContent value="upcoming" className="space-y-4 pt-4">
                 <h3 className="text-xl font-semibold">Your Upcoming Events</h3>
-                {upcomingEvents.map((event) => (
+                {upcomingEvents.map((event: any) => (
                   <Card key={event.id}>
                     <CardContent className="p-4">
                       <div className="grid gap-4 md:grid-cols-[1fr_auto]">
@@ -164,42 +194,10 @@ export default function ProfilePage() {
                   </Card>
                 ))}
               </TabsContent>
-              <TabsContent value="past" className="space-y-4 pt-4">
-                <h3 className="text-xl font-semibold">Your Past Events</h3>
-                {pastEvents.map((event) => (
-                  <Card key={event.id}>
-                    <CardContent className="p-4">
-                      <div className="grid gap-4 md:grid-cols-[1fr_auto]">
-                        <div>
-                          <h4 className="text-lg font-medium">{event.title}</h4>
-                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-2 gap-x-4 mt-2">
-                            <div className="flex items-center gap-2">
-                              <Calendar className="h-4 w-4 text-muted-foreground flex-shrink-0" />
-                              <span>{event.date}</span>
-                            </div>
-                            <div className="flex items-center gap-2">
-                              <Clock className="h-4 w-4 text-muted-foreground flex-shrink-0" />
-                              <span>{event.time}</span>
-                            </div>
-                            <div className="flex items-center gap-2 sm:col-span-2">
-                              <MapPin className="h-4 w-4 text-muted-foreground flex-shrink-0" />
-                              <span>{event.location}</span>
-                            </div>
-                          </div>
-                        </div>
-                        <div className="flex flex-col gap-2">
-                          <Button variant="outline" size="sm">
-                            View Details
-                          </Button>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </TabsContent>
+
               <TabsContent value="groups" className="space-y-4 pt-4">
                 <h3 className="text-xl font-semibold">Your Groups</h3>
-                {myGroups.map((group) => (
+                {myGroups.map((group: any) => (
                   <Card key={group.id}>
                     <CardContent className="p-4">
                       <div className="grid gap-4 md:grid-cols-[1fr_auto]">
@@ -311,31 +309,6 @@ export default function ProfilePage() {
                 Connecting seniors with shared interests and local events.
               </p>
             </div>
-            {/* <div>
-              <h3 className="text-lg font-medium mb-2">Quick Links</h3>
-              <ul className="space-y-2">
-                <li>
-                  <Link href="/about" className="text-muted-foreground hover:text-primary">
-                    About Us
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/help" className="text-muted-foreground hover:text-primary">
-                    Help & Support
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/contact" className="text-muted-foreground hover:text-primary">
-                    Contact
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/accessibility" className="text-muted-foreground hover:text-primary">
-                    Accessibility
-                  </Link>
-                </li>
-              </ul>
-            </div> */}
             <div>
               <h3 className="text-lg font-medium mb-2">Contact Us</h3>
               <p className="text-muted-foreground">
@@ -373,23 +346,6 @@ const upcomingEvents = [
     date: "April 18, 2025",
     time: "2:00 PM - 3:30 PM",
     location: "Public Library, Meeting Room 2",
-  },
-];
-
-const pastEvents = [
-  {
-    id: 1,
-    title: "Watercolor Painting Class",
-    date: "March 25, 2025",
-    time: "1:00 PM - 3:00 PM",
-    location: "Senior Arts Center",
-  },
-  {
-    id: 2,
-    title: "Technology Workshop: Smartphone Basics",
-    date: "March 18, 2025",
-    time: "10:00 AM - 11:30 AM",
-    location: "Community Center, Tech Room",
   },
 ];
 

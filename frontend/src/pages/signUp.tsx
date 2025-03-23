@@ -38,6 +38,7 @@ const signupSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
   age: z.coerce.number().int().min(13, "You must be at least 13 years old"),
   password: z.string().min(8, "Password must be at least 8 characters"),
+  interests: z.array(z.string()).min(1, "Please select at least one interest"),
 });
 
 const availableInterests = [
@@ -69,6 +70,7 @@ export default function SignupPage() {
     email: "",
     age: "",
     password: "",
+    interests: [],
   });
 
   const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
@@ -114,21 +116,30 @@ export default function SignupPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-  
+
     try {
-      const validatedData = signupSchema.parse(formData);
-  
+      const completeFormData = {
+        ...formData,
+        interests: selectedInterests,
+      };
+
+      const validatedData = signupSchema.parse(completeFormData);
+
       // Retrieve Bearer token from localStorage (or wherever it is stored)
-      const token = localStorage.getItem('authToken');
-  
+      const token = localStorage.getItem("authToken");
+
       // Send data to the backend via postRequest with Bearer token
-      const response = await postRequest("create_user", validatedData, token || "");
-  
+      const response = await postRequest(
+        "create_user",
+        validatedData,
+        token || ""
+      );
+
       if (response) {
         if (response.token) {
           localStorage.setItem("authToken", response.token);
         }
-  
+
         alert("Registration successful!");
         navigate("/login");
       }
@@ -148,7 +159,6 @@ export default function SignupPage() {
       setIsLoading(false);
     }
   };
-  
 
   return (
     <div className="flex min-h-screen items-center justify-center px-4 py-12">

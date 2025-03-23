@@ -15,8 +15,23 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Link, useNavigate } from "react-router-dom";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Check, ChevronsUpDown, X } from "lucide-react";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
 import { postRequest } from "@/api/utils";
-
 
 const signupSchema = z.object({
   username: z.string().min(3, "Username must be at least 3 characters"),
@@ -24,6 +39,27 @@ const signupSchema = z.object({
   age: z.coerce.number().int().min(13, "You must be at least 13 years old"),
   password: z.string().min(8, "Password must be at least 8 characters"),
 });
+
+const availableInterests = [
+  "Art",
+  "Books",
+  "Cooking",
+  "Design",
+  "Fashion",
+  "Fitness",
+  "Gaming",
+  "Gardening",
+  "History",
+  "Movies",
+  "Music",
+  "Photography",
+  "Programming",
+  "Science",
+  "Sports",
+  "Technology",
+  "Travel",
+  "Writing",
+];
 
 export default function SignupPage() {
   const navigate = useNavigate();
@@ -34,9 +70,33 @@ export default function SignupPage() {
     age: "",
     password: "",
   });
+
+  const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isLoading, setIsLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [interestPopoverOpen, setInterestPopoverOpen] = useState(false);
+
+  const handleInterestSelect = (interest: string) => {
+    if (selectedInterests.includes(interest)) {
+      setSelectedInterests(selectedInterests.filter((i) => i !== interest));
+    } else {
+      setSelectedInterests([...selectedInterests, interest]);
+    }
+
+    // Clear interest error if it exists
+    if (errors.interests) {
+      setErrors((prev) => {
+        const newErrors = { ...prev };
+        delete newErrors.interests;
+        return newErrors;
+      });
+    }
+  };
+
+  const removeInterest = (interest: string) => {
+    setSelectedInterests(selectedInterests.filter((i) => i !== interest));
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -92,9 +152,9 @@ export default function SignupPage() {
 
   return (
     <div className="flex min-h-screen items-center justify-center px-4 py-12">
-      <Card className="w-full max-w-md">
+      <Card className="w-full max-w-md my-20">
         <CardHeader>
-          <CardTitle className="text-2xl">Sign Up</CardTitle>
+          <CardTitle className="text-2xl mt-10">Sign Up</CardTitle>
           <CardDescription>Create a new account to get started</CardDescription>
         </CardHeader>
         <form onSubmit={handleSubmit}>
@@ -164,9 +224,82 @@ export default function SignupPage() {
                 <p className="text-sm text-destructive">{errors.password}</p>
               )}
             </div>
+
+            <div className="space-y-2">
+              <Label>Interests</Label>
+              <Popover
+                open={interestPopoverOpen}
+                onOpenChange={setInterestPopoverOpen}
+              >
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    role="combobox"
+                    aria-expanded={interestPopoverOpen}
+                    className="w-full justify-between"
+                  >
+                    {selectedInterests.length > 0
+                      ? `${selectedInterests.length} interest${
+                          selectedInterests.length > 1 ? "s" : ""
+                        } selected`
+                      : "Select interests..."}
+                    <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-full p-0">
+                  <Command>
+                    <CommandInput placeholder="Search interests..." />
+                    <CommandList>
+                      <CommandEmpty>No interests found.</CommandEmpty>
+                      <CommandGroup>
+                        {availableInterests.map((interest) => (
+                          <CommandItem
+                            key={interest}
+                            value={interest}
+                            onSelect={() => handleInterestSelect(interest)}
+                          >
+                            <Check
+                              className={cn(
+                                "mr-2 h-4 w-4",
+                                selectedInterests.includes(interest)
+                                  ? "opacity-100"
+                                  : "opacity-0"
+                              )}
+                            />
+                            {interest}
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </CommandList>
+                  </Command>
+                </PopoverContent>
+              </Popover>
+
+              {selectedInterests.length > 0 && (
+                <div className="flex flex-wrap gap-2 mt-2">
+                  {selectedInterests.map((interest) => (
+                    <Badge
+                      key={interest}
+                      variant="secondary"
+                      className="flex items-center gap-1"
+                    >
+                      {interest}
+                      <X
+                        className="h-3 w-3 cursor-pointer"
+                        onClick={() => removeInterest(interest)}
+                      />
+                    </Badge>
+                  ))}
+                </div>
+              )}
+
+              {errors.interests && (
+                <p className="text-sm text-destructive">{errors.interests}</p>
+              )}
+            </div>
           </CardContent>
 
-          <CardFooter className="flex flex-col space-y-4">
+          <CardFooter className="flex flex-col space-y-4 mb-10 mt-10">
             <Button type="submit" className="w-full" disabled={isLoading}>
               {isLoading ? "Creating account..." : "Create account"}
             </Button>

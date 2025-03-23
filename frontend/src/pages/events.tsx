@@ -14,7 +14,7 @@ import { Link } from "react-router-dom";
 
 export default function EventsPage() {
   // State to hold groups data
-  const [events, setEvents] = useState([]);
+  const [events, setEvents] = useState<any>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   console.log(events, "events");
@@ -24,13 +24,16 @@ export default function EventsPage() {
       try {
         const token = localStorage.getItem("authToken"); // Or wherever you store the token
         console.log(token, "token");
-        const response = await fetch("http://localhost:5000/events", {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const response = await fetch(
+          "http://localhost:5000/events?date_range=&location_miles=&sort_by=",
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
 
         if (!response.ok) {
           throw new Error("Failed to fetch groups");
@@ -185,13 +188,9 @@ export default function EventsPage() {
               </Select>
             </div>
             <div className="grid gap-6">
-              {events.map((event: any) =>
-                event?.length > 0 ? (
-                  <EventCard key={event?.id} event={event} />
-                ) : (
-                  <p>No Event Available</p>
-                )
-              )}
+              {events?.events?.map((event: any) => (
+                <EventCard key={event?.id} event={event} />
+              ))}
             </div>
             <div className="flex justify-center">
               <div className="flex items-center gap-2">
@@ -304,7 +303,7 @@ function EventCard({ event }: any) {
             </div>
             <div className="flex items-center gap-2">
               <Clock className="h-4 w-4 text-muted-foreground flex-shrink-0" />
-              <span>{event.time}</span>
+              <span>{event?.time ? event.time : "No Time available"}</span>
             </div>
             <div className="flex items-center gap-2 sm:col-span-2">
               <MapPin className="h-4 w-4 text-muted-foreground flex-shrink-0" />
@@ -315,7 +314,9 @@ function EventCard({ event }: any) {
             <div className="text-sm text-muted-foreground">
               {event.attendees} people attending
             </div>
-            <Button className="w-full sm:w-auto text-base">Register</Button>
+            <Link to={`/eventDetail/${event._id}`}>
+              <Button className="w-full sm:w-auto text-base">Register</Button>
+            </Link>
           </div>
         </div>
       </div>

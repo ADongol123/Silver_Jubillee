@@ -53,7 +53,7 @@ function App() {
         element={isAuthenticated ? <ProfilePage /> : <Navigate to="/login" />}
       />
       <Route
-        path="/eventDetail"
+        path="/eventDetail/:id"
         element={
           isAuthenticated ? <EventDetailPage /> : <Navigate to="/login" />
         }

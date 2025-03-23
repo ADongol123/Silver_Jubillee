@@ -28,6 +28,9 @@ const Header = () => {
           <Link to="/profile" className="text-lg font-medium text-primary">
             My Profile
           </Link>
+          <Link to="/login" className="text-lg font-medium text-primary">
+            Login
+          </Link>
         </nav>
       </div>
     </div>

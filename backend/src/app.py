@@ -30,9 +30,9 @@ def home():
     return "Welcome to the User API!"
 
 # Initialize group cache for recommendations on startup
-with app.app_context():
-    from recommender import init_group_cache
-    init_group_cache()
+# with app.app_context():
+#     from recommender import init_group_cache
+#     init_group_cache()
 
 if __name__ == '__main__':
     if test_connection():

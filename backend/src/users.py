@@ -17,9 +17,9 @@ def create_user():
         username = data.get('username')
         email = data.get('email')
         password = data.get('password')
-
+        interests = data.get('interests',[])
         # Validation
-        if not all([username, email, password]):
+        if not all([username, email, password,interests]):
             return jsonify({"error": "Missing required fields"}), 400
         if len(username) < 3:
             return jsonify({"error": "Username must be at least 3 characters"}), 400
@@ -27,7 +27,8 @@ def create_user():
             return jsonify({"error": "Password must be at least 6 characters"}), 400
         if "@" not in email or "." not in email:
             return jsonify({"error": "Invalid email format"}), 400
-
+        if not isinstance(interests, list) or not all(isinstance(interest, str) for interest in interests):
+            return jsonify({"error": "Interests must be a list of strings"}), 400
         # Check for duplicates
         if users_collection.find_one({"username": username}):
             return jsonify({"error": "Username already exists"}), 409
@@ -44,7 +45,8 @@ def create_user():
             "password": hashed_password,  # In production, hash this!
             "createdAt": datetime.datetime.utcnow(),
             "lastLogin": None,
-            "isActive": True
+            "isActive": True,
+            "interests": interests
         }
 
         result = users_collection.insert_one(user)

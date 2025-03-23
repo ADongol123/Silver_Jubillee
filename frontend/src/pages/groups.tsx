@@ -10,21 +10,26 @@ import {
 } from "@/components/ui/select";
 import GroupCard from "@/Page_components/GroupCards";
 import Header from "@/Page_components/Header";
-import { Filter, Search } from "lucide-react";
+import { Filter, Search, Users } from "lucide-react";
 import { Link } from "react-router-dom";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import Placeholder from "../../public/placeholder.svg";
 
 export default function GroupsPage() {
   // State to hold groups data
   const [groups, setGroups] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
+  const [activeTab, setActiveTab] = useState("all");
   // Fetch groups from API on component mount
   useEffect(() => {
     const fetchGroups = async () => {
       try {
-        const token = localStorage.getItem("token"); // Or wherever you store the token
-        const response = await fetch("http://localhost:5000/groups", {
+        const token = localStorage.getItem("authToken"); // Or wherever you store the token
+        const userId = localStorage.getItem("userId");
+
+        // Fetch general groups
+        const groupsResponse = await fetch("http://localhost:5000/groups", {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -32,24 +37,48 @@ export default function GroupsPage() {
           },
         });
 
-        if (!response.ok) {
+        if (!groupsResponse.ok) {
           throw new Error("Failed to fetch groups");
         }
 
-        const data = await response.json();
-        setGroups(data.groups); // Assuming your response structure contains 'groups'
+        const groupsData = await groupsResponse?.json();
+
+        // Fetch recommended groups if tab is "recommended"
+        let recommendedGroups = [];
+        if (activeTab === "recommended") {
+          const recommendedResponse = await fetch(
+            `http://localhost:5000/recommend/${userId}`,
+            {
+              method: "GET",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+
+          if (!recommendedResponse.ok) {
+            throw new Error("Failed to fetch recommended groups");
+          }
+
+          const recommendedData = await recommendedResponse?.json();
+          recommendedGroups = recommendedData?.recommended_groups;
+        }
+        console.log(groupsData, "groupsData");
+        console.log(recommendedGroups, "4545");
+        // Filter and match groups
+        setGroups(activeTab === "all" ? groupsData?.groups : recommendedGroups);
         setLoading(false);
-      } catch (error : any) {
+      } catch (error: any) {
         setError(error.message);
         setLoading(false);
       }
     };
 
     fetchGroups();
-  }, []);
+  }, [activeTab]);
 
-
-  console.log(groups,"groups")
+  console.log(groups, "groups");
   return (
     <div className="min-h-screen bg-background">
       <header className="border-b">
@@ -58,7 +87,9 @@ export default function GroupsPage() {
       <main className="container px-4 py-8 sm:px-6 lg:px-8">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">Interest Groups</h1>
+            <h1 className="text-3xl font-bold tracking-tight">
+              Interest Groups
+            </h1>
             <p className="text-xl text-muted-foreground mt-1">
               Connect with people who share your interests
             </p>
@@ -84,7 +115,10 @@ export default function GroupsPage() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <label htmlFor="group-category" className="text-sm font-medium">
+                  <label
+                    htmlFor="group-category"
+                    className="text-sm font-medium"
+                  >
                     Category
                   </label>
                   <Select defaultValue="all">
@@ -98,12 +132,17 @@ export default function GroupsPage() {
                       <SelectItem value="games">Games & Recreation</SelectItem>
                       <SelectItem value="health">Health & Wellness</SelectItem>
                       <SelectItem value="tech">Technology</SelectItem>
-                      <SelectItem value="outdoors">Outdoors & Nature</SelectItem>
+                      <SelectItem value="outdoors">
+                        Outdoors & Nature
+                      </SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
                 <div className="space-y-2">
-                  <label htmlFor="activity-level" className="text-sm font-medium">
+                  <label
+                    htmlFor="activity-level"
+                    className="text-sm font-medium"
+                  >
                     Activity Level
                   </label>
                   <Select defaultValue="all">
@@ -143,16 +182,72 @@ export default function GroupsPage() {
             </div>
           </div>
           <div className="space-y-6">
-            <div className="flex items-center justify-between">
-              <h2 className="text-xl font-semibold">Popular Groups</h2>
+            <div className="flex items-center justify-between p-4 bg-white shadow-md rounded-lg">
+              <div>
+                <h2 className="text-xl font-semibold text-gray-800">
+                  Popular Groups
+                </h2>
+              </div>
+              <div className="flex items-center gap-3 border border-gray-300 rounded-2xl p-1 bg-gray-100 cursor-pointer">
+                <p
+                  className={`text-gray-700 hover:text-black transition px-4 py-2 rounded-2xl bg-gray-200  ${
+                    activeTab === "all" ? "bg-gray-300" : ""
+                  }`}
+                  onClick={() => setActiveTab("all")}
+                >
+                  All
+                </p>
+                <p
+                  className={`text-gray-700 hover:text-black transition px-4 py-2 rounded-2xl bg-gray-200  ${
+                    activeTab === "recommended" ? "bg-gray-300" : ""
+                  }`}
+                  onClick={() => setActiveTab("recommended")}
+                >
+                  Recommended
+                </p>
+              </div>
             </div>
+
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {loading ? (
                 <div>Loading...</div>
               ) : error ? (
                 <div>Error: {error}</div>
               ) : (
-                groups.map((group : any) => <GroupCard key={group.id} group={group} />)
+                groups.map((group: any) =>
+                  activeTab === "all" ? (
+                    <GroupCard key={group.id} group={group} />
+                  ) : (
+                    <Card className="h-full">
+                      <CardHeader className="p-0">
+                        <img
+                          src={Placeholder}
+                          alt={group.name}
+                          className="w-full h-48 object-cover rounded-t-lg"
+                        />
+                      </CardHeader>
+                      <CardContent className="p-6">
+                        <CardTitle className="text-xl mb-2">
+                          {group.group_id}
+                        </CardTitle>
+                        <CardDescription className="text-base mb-4">
+                          {group.name}
+                        </CardDescription>
+                        {/* <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <Users className="h-4 w-4 text-muted-foreground" />
+                            <span className="text-sm">
+                              {group.members.length} members
+                            </span>
+                          </div>
+                          <span className="text-sm text-muted-foreground">
+                            {group.category}
+                          </span>
+                        </div> */}
+                      </CardContent>
+                    </Card>
+                  )
+                )
               )}
             </div>
           </div>
